@@ -37,10 +37,17 @@
   &.add-dos { border-style: dashed; }
 }
 
-.coding-content { flex: 1; overflow: auto; background:#f8f8f8; }
+.coding-content { 
+  flex: 1; 
+  min-height: 0; 
+  overflow-y: auto; 
+  background: #f8f8f8; 
+}
 
 .panel-footer {
   display: flex; gap: 4px; padding: 6px 8px; border-top: 1px solid #9aa8b7; background: #ffffff;
+  flex-shrink: 0;
+  z-index: 5;
 }
 .footer-btn {
   flex: 1; padding: 4px; border-radius: 4px; border: 1px solid #9aa8b7;
@@ -49,13 +56,13 @@
 }
 
 .summary-bar {
-  padding: 6px 10px;
+  padding: 4px 10px;
   border-top: 1px solid #9aa8b7;
-  background: linear-gradient(#eef3f8, #dde7f1);
-  display: flex; align-items: center; gap: 10px;
+  background: #ffffff;
+  display: flex; align-items: center; gap: 20px;
   flex-shrink: 0;
 }
-.summary-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
-.summary-val { font-size: 13px; font-weight: 700; }
-.summary-lbl { font-size: 9px; color: #4f647d; text-transform: uppercase; }
-.summary-div { width: 1px; height: 28px; background: #9aa8b7; }
+.summary-item { display: flex; align-items: baseline; gap: 5px; }
+.summary-val { font-size: 14px; font-weight: 700; color: #1f2f44; }
+.summary-lbl { font-size: 8px; color: #6b7785; text-transform: uppercase; font-weight: 600; }
+.summary-div { width: 1px; height: 18px; background: #d0d0d0; }
