@@ -3,10 +3,10 @@
     <span class="section-title">💰 Claims Data</span>
     <span class="sep"></span>
     <input class="mini-input" placeholder="🔍 Search claims...">
-    <span class="filter-chip on">All</span>
-    <span class="filter-chip">Paid</span>
-    <span class="filter-chip">Denied</span>
-    <span class="filter-chip">Pending</span>
+    <span class="filter-chip" [class.on]="activeFilter === 'All'" (click)="setFilter('All')">All</span>
+    <span class="filter-chip" [class.on]="activeFilter === 'Paid'" (click)="setFilter('Paid')">Paid</span>
+    <span class="filter-chip" [class.on]="activeFilter === 'Denied'" (click)="setFilter('Denied')">Denied</span>
+    <span class="filter-chip" [class.on]="activeFilter === 'Pending'" (click)="setFilter('Pending')">Pending</span>
     <button class="btn" (click)="toggleColSelector()">⚙ Cols</button>
     <button class="btn" (click)="toggleFullscreen()">
       {{isFullscreen ? '⤦ Normal' : '⛶ Full'}}
