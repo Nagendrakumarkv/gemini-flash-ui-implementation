@@ -2,7 +2,7 @@
   <div class="claims-toolbar">
     <span class="section-title">💰 Claims Data</span>
     <span class="sep"></span>
-    <input class="mini-input" placeholder="🔍 Search claims...">
+    <input class="mini-input" placeholder="🔍 Search claims..." [(ngModel)]="searchQuery">
     <span class="filter-chip" [class.on]="activeFilter === 'All'" (click)="setFilter('All')">All</span>
     <span class="filter-chip" [class.on]="activeFilter === 'Paid'" (click)="setFilter('Paid')">Paid</span>
     <span class="filter-chip" [class.on]="activeFilter === 'Denied'" (click)="setFilter('Denied')">Denied</span>

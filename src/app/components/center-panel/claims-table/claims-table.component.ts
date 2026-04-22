@@ -48,15 +48,30 @@ export class ClaimsTableComponent {
   ];
 
   activeFilter: string = 'All';
-  isColSelectorOpen = true; // Open by default for this task
+  searchQuery: string = '';
+  isColSelectorOpen = false;
   isFullscreen = false;
   groupBy: string = 'Provider';
 
   get claims(): any[] {
     let filtered = this.allClaims;
+    
+    // Status filter
     if (this.activeFilter !== 'All') {
-      filtered = this.allClaims.filter(c => c.status === this.activeFilter.toUpperCase());
+      filtered = filtered.filter(c => c.status === this.activeFilter.toUpperCase());
     }
+
+    // Search filter
+    if (this.searchQuery) {
+      const q = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.id.toLowerCase().includes(q) ||
+        c.provider.toLowerCase().includes(q) ||
+        c.icd.toLowerCase().includes(q) ||
+        c.payer.toLowerCase().includes(q)
+      );
+    }
+    
     return filtered;
   }
 
