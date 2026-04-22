@@ -2,6 +2,9 @@
   height: 100%;
   display: flex; flex-direction: column; flex-shrink: 0;
   background: #f3f3f3;
+  &.fullscreen {
+    position: fixed; top: 33px; left: 0; right: 0; bottom: 0; z-index: 950;
+  }
 }
 .claims-toolbar {
   height: 30px;

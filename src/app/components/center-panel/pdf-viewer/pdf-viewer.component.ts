@@ -12,7 +12,13 @@ export class PdfViewerComponent {
   currentPage: number = 1;
   totalPages: number = 6;
 
+  isFullscreen = false;
+
   constructor(private toastService: ToastService) {}
+
+  toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
+  }
 
   showToast(msg: string) {
     this.toastService.showToast(msg);

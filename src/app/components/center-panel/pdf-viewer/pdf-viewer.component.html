@@ -1,8 +1,11 @@
-<div class="pdf-container">
+<div class="pdf-container" [class.fullscreen]="isFullscreen">
   <div class="pdf-toolbar">
     <button class="btn" (click)="navPage(-1)">◀</button>
     <button class="btn" (click)="navPage(1)">▶</button>
     <div class="pdf-name">{{filename}}</div>
+    <button class="btn full-btn" (click)="toggleFullscreen()">
+      {{isFullscreen ? '⤦ Normal' : '⛶ Full'}}
+    </button>
     <button class="btn" (click)="showToast('Annotation mode on')">✏ Annotate</button>
     <button class="btn" (click)="showToast('Highlight mode on')">🖊 Highlight</button>
     <div class="page-nav">

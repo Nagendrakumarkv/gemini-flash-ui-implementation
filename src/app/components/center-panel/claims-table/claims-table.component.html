@@ -1,4 +1,4 @@
-<div class="claims-section">
+<div class="claims-section" [class.fullscreen]="isFullscreen">
   <div class="claims-toolbar">
     <span class="section-title">💰 Claims Data</span>
     <span class="sep"></span>
@@ -8,6 +8,9 @@
     <span class="filter-chip">Denied</span>
     <span class="filter-chip">Pending</span>
     <button class="btn" (click)="toggleColSelector()">⚙ Cols</button>
+    <button class="btn" (click)="toggleFullscreen()">
+      {{isFullscreen ? '⤦ Normal' : '⛶ Full'}}
+    </button>
   </div>
 
   <div class="col-selector" *ngIf="isColSelectorOpen">

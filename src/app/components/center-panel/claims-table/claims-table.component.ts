@@ -15,9 +15,14 @@ export class ClaimsTableComponent {
   ];
 
   isColSelectorOpen = false;
+  isFullscreen = false;
   groupBy: string = 'Provider';
 
   toggleColSelector() {
     this.isColSelectorOpen = !this.isColSelectorOpen;
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
   }
 }
