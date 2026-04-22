@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="add-actions">
-          <button class="btn blue" (click)="add()">+ Add {{tabId.toUpperCase()}}</button>
+          <button class="btn btn-add-gap" (click)="add()">+ Add {{tabId === 'icd' ? 'ICD' : tabId === 'icd-gaps' ? 'Gap' : tabId === 'cpt' ? 'CPT' : 'Gap'}}</button>
         </div>
       </div>
 

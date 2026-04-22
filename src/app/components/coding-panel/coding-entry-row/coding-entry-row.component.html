@@ -44,7 +44,7 @@
     </div>
   </div>
   <div class="edit-actions">
-    <button class="btn blue" (click)="save()">Save</button>
+    <button class="btn blue" (click)="save()">Update {{entry.icd ? 'ICD' : 'CPT'}}</button>
     <button class="btn" (click)="onCancel()">Cancel</button>
   </div>
 </div>
