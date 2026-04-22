@@ -14,38 +14,57 @@
   </div>
 
   <div class="col-selector" *ngIf="isColSelectorOpen">
-    <label><input type="checkbox" checked> Claim ID</label>
-    <label><input type="checkbox" checked> DOS</label>
-    <label><input type="checkbox" checked> Provider</label>
-    <label><input type="checkbox" checked> ICD</label>
-    <label><input type="checkbox" checked> Amount</label>
-    <label><input type="checkbox" checked> Status</label>
+    <div class="col-grid">
+      <label *ngFor="let col of columnConfigs">
+        <input type="checkbox" [(ngModel)]="col.visible"> {{col.label}}
+      </label>
+    </div>
   </div>
 
   <div class="data-table-wrap">
     <table class="data-table">
       <thead>
         <tr>
-          <th>Claim ID</th>
-          <th>DOS</th>
-          <th>Provider</th>
-          <th>ICD</th>
-          <th>Description</th>
-          <th class="cell-amt">Amount</th>
-          <th>Status</th>
+          <th *ngIf="isColumnVisible('id')">Claim ID ↕</th>
+          <th *ngIf="isColumnVisible('patientId')">Patient ID ↕</th>
+          <th *ngIf="isColumnVisible('patientName')">Patient Name ↕</th>
+          <th *ngIf="isColumnVisible('dob')">DOB ↕</th>
+          <th *ngIf="isColumnVisible('gender')">Gender ↕</th>
+          <th *ngIf="isColumnVisible('dos')">Date of Service (DOS) ↕</th>
+          <th *ngIf="isColumnVisible('year')">Claim Year ↕</th>
+          <th *ngIf="isColumnVisible('provider')">Provider Name ↕</th>
+          <th *ngIf="isColumnVisible('npi')">Provider NPI ↕</th>
+          <th *ngIf="isColumnVisible('facility')">Facility Name ↕</th>
+          <th *ngIf="isColumnVisible('icd')">ICD-10 Codes ↕</th>
+          <th *ngIf="isColumnVisible('icdDesc')">ICD Descriptions ↕</th>
+          <th *ngIf="isColumnVisible('cpt')">CPT/HCPCS Codes ↕</th>
+          <th *ngIf="isColumnVisible('cptDesc')">Procedure Descriptions ↕</th>
+          <th *ngIf="isColumnVisible('status')">Claim Status ↕</th>
+          <th *ngIf="isColumnVisible('payer')">Payer Name ↕</th>
+          <th *ngIf="isColumnVisible('raf')">RAF Score Contribution ↕</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let claim of claims">
-          <td>{{claim.id}}</td>
-          <td>{{claim.dos}}</td>
-          <td>{{claim.provider}}</td>
-          <td class="cell-icd">{{claim.icd}}</td>
-          <td>{{claim.desc}}</td>
-          <td class="cell-amt">${{claim.amt | number:'1.2-2'}}</td>
-          <td>
+          <td *ngIf="isColumnVisible('id')">{{claim.id}}</td>
+          <td *ngIf="isColumnVisible('patientId')">{{claim.patientId}}</td>
+          <td *ngIf="isColumnVisible('patientName')">{{claim.patientName}}</td>
+          <td *ngIf="isColumnVisible('dob')">{{claim.dob}}</td>
+          <td *ngIf="isColumnVisible('gender')">{{claim.gender}}</td>
+          <td *ngIf="isColumnVisible('dos')">{{claim.dos}}</td>
+          <td *ngIf="isColumnVisible('year')">{{claim.year}}</td>
+          <td *ngIf="isColumnVisible('provider')">{{claim.provider}}</td>
+          <td *ngIf="isColumnVisible('npi')">{{claim.npi}}</td>
+          <td *ngIf="isColumnVisible('facility')">{{claim.facility}}</td>
+          <td *ngIf="isColumnVisible('icd')" class="cell-icd">{{claim.icd}}</td>
+          <td *ngIf="isColumnVisible('icdDesc')">{{claim.icdDesc}}</td>
+          <td *ngIf="isColumnVisible('cpt')">{{claim.cpt}}</td>
+          <td *ngIf="isColumnVisible('cptDesc')">{{claim.cptDesc}}</td>
+          <td *ngIf="isColumnVisible('status')">
             <span class="status-pill" [ngClass]="claim.status.toLowerCase()">{{claim.status}}</span>
           </td>
+          <td *ngIf="isColumnVisible('payer')">{{claim.payer}}</td>
+          <td *ngIf="isColumnVisible('raf')" class="cell-amt">{{claim.raf}}</td>
         </tr>
       </tbody>
     </table>
