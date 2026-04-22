@@ -4,10 +4,10 @@
     <span class="count"><span class="badge blue">54</span></span>
   </div>
   <div class="enc-search">
-    <input class="search-input" placeholder="🔍 Search DOS, provider, ICD...">
+    <input class="search-input" placeholder="🔍 Search DOS, provider, ICD..." (input)="onSearch($event)">
   </div>
   <div class="enc-list">
-    <div *ngFor="let enc of encounters$ | async" 
+    <div *ngFor="let enc of filteredEncounters$ | async" 
          class="enc-item" 
          [class.active]="selectedEncounter?.id === enc.id"
          (click)="selectEncounter(enc)">
