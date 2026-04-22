@@ -1,0 +1,53 @@
+<div class="coding-tab-container">
+  <div class="coding-section">
+    <div class="section-header" (click)="isExpanded = !isExpanded">
+      <span class="chevron" [class.open]="isExpanded">▶</span>
+      <span class="section-icon">🏷</span>
+      <span class="section-label">{{headerLabel}}</span>
+      <span class="badge blue" style="font-size:9px">7</span>
+    </div>
+    
+    <div class="section-body" *ngIf="isExpanded">
+      <!-- Dynamic Add Form -->
+      <div class="add-form-card">
+        <div class="form-grid">
+          <div *ngFor="let field of config" [style.grid-column]="'span ' + (field.cols || 4)">
+            <label class="form-label">{{field.label}}</label>
+            
+            <input *ngIf="field.type === 'text' || field.type === 'number'"
+                   [type]="field.type"
+                   class="form-control"
+                   [placeholder]="field.placeholder"
+                   [(ngModel)]="newEntry[field.key]"
+                   [disabled]="field.disabled">
+
+            <select *ngIf="field.type === 'select'"
+                    class="form-select"
+                    [(ngModel)]="newEntry[field.key]">
+              <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
+            </select>
+
+            <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
+                           [(ngModel)]="newEntry[field.key]">
+            </app-opp-lookup>
+          </div>
+        </div>
+        <div class="add-actions">
+          <button class="btn blue" (click)="add()">+ Add {{tabId.toUpperCase()}}</button>
+        </div>
+      </div>
+
+      <!-- Entries List -->
+      <div class="entries-list">
+        <app-coding-entry-row 
+          *ngFor="let entry of entries$ | async"
+          [entry]="entry"
+          [config]="config"
+          [isFullscreen]="isFullscreen"
+          (update)="update($event)"
+          (delete)="delete($event)">
+        </app-coding-entry-row>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="opp-lookup-wrapper">
+  <input type="text" class="form-control opp-lookup-input" 
+         [placeholder]="placeholder" 
+         [value]="value" 
+         readonly 
+         (click)="toggle()">
+  <span class="opp-lookup-arrow">▼</span>
+
+  <div class="opp-lookup-container" [class.active]="isOpen">
+    <div class="opp-search-box">
+      <input type="text" placeholder="Filter..." [(ngModel)]="searchText">
+    </div>
+    <div class="opp-list">
+      <ng-container *ngFor="let group of options">
+        <div class="opp-item group">{{group.category}}</div>
+        <div class="opp-item" 
+             *ngFor="let item of group.items"
+             (click)="select(item)">
+          {{item}}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+.opp-lookup-wrapper { position: relative; width: 100%; }
+.opp-lookup-input { width: 100%; padding-right: 24px !important; cursor: pointer; }
+.opp-lookup-container {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #c0ccda;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 2000;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0;
+  flex-direction: column;
+}
+.opp-lookup-container.active { display: flex; }
+.opp-lookup-arrow {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px;
+  color: #a0aec0;
+  pointer-events: none;
+}
+.opp-search-box {
+  padding: 8px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  input {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #cbd5e0;
+    border-radius: 3px;
+  }
+}
+.opp-list { max-height: 220px; overflow-y: auto; }
+.opp-item {
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f8fafc;
+  &:hover { background: #eff6ff; }
+  &.group {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #4a5568;
+    cursor: default;
+    pointer-events: none;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+}

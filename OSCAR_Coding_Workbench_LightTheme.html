@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSCAR — Medical Coding Workstation</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+ :root {
+ --bg: #d9d9d9;
+ --surface: #f0f0f0;
+ --surface2: #ffffff;
+ --surface3: #e7edf6;
+ --border: #9aa8b7;
+ --border2: #73859a;
+ --accent: #1e4f8f;
+ --accent2: #2b6cb0;
+ --accent3: #6a7c93;
+ --accent4: #9c3d3d;
+ --accent5: #315f96;
+ --text: #1f2f44;
+ --text2: #4f647d;
+ --text3: #6b7785;
+ --success: #2f7d32;
+ --warning: #b7791f;
+ --danger: #c53030;
+ --mono: 'Segoe UI', Tahoma, Arial, sans-serif;
+ --sans: 'Segoe UI', Tahoma, Arial, sans-serif;
+ --panel-head: 28px;
+ --tab-h: 28px;
+ --row-h: 28px;
+ }
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body {
+ font-family: var(--sans);
+ background: var(--bg);
+ color: var(--text);
+ height: 100vh;
+ overflow: hidden;
+ font-size: 11px;
+ display: flex;
+ flex-direction: column;
+ }
+ /* ── TOP BAR ── */
+ .topbar {
+ height: 33px;
+ background: linear-gradient(#214f8a, #143e73);
+ border-bottom: 1px solid #0d2b52;
+ display: flex;
+ align-items: center;
+ padding: 0 8px;
+ gap: 8px;
+ flex-shrink: 0;
+ z-index: 100;
+ color: #ffffff;
+ }
+ .logo {
+ font-family: var(--sans);
+ font-weight: 700;
+ font-size: 13px;
+ color: #ffffff;
+ letter-spacing: 0;
+ white-space: nowrap;
+ background: rgba(255,255,255,0.15);
+ border: 1px solid rgba(255,255,255,0.25);
+ border-radius: 4px;
+ padding: 1px 6px;
+ line-height: 1.2;
+ }
+ .logo span { color: #d7ecff; }
+ .topbar-divider { width: 1px; height: 18px; background: rgba(255,255,255,0.25); }
+ .patient-chip {
+ display: flex; align-items: center; gap: 8px;
+ background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24);
+ border-radius: 3px; padding: 2px 8px;
+ min-height: 24px;
+ }
+ .patient-chip .name { font-weight: 700; font-size: 11px; color: #ffffff; }
+ .patient-chip .meta { font-size: 10px; color: #e6f1ff; }
+ .badge {
+ font-family: var(--sans);
+ font-size: 10px; font-weight: 600;
+ padding: 2px 6px; border-radius: 3px;
+ background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24);
+ color: #ffffff;
+ }
+ .badge.blue, .badge.green, .badge.orange, .badge.purple, .badge.pink {
+ background: rgba(255,255,255,0.14);
+ border-color: rgba(255,255,255,0.24);
+ color: #ffffff;
+ }
+ .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+ .btn {
+ display: flex; align-items: center; gap: 4px;
+ padding: 3px 10px; border-radius: 10px; border: 1px solid #6d88aa;
+ background: linear-gradient(#ffffff, #dfe8f5); color: #27496d; cursor: pointer;
+ font-family: var(--sans); font-size: 10px; font-weight: 600;
+ transition: all 0.15s; white-space: nowrap; line-height: 1.2;
+ box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+ }
+ .btn:hover { background: linear-gradient(#ffffff, #d4dfef); border-color: #345f96; color: #123b73; }
+ .btn.primary { background: linear-gradient(#fefefe, #d7e3f4); border-color: #6d88aa; color: #23466f; }
+ .btn.primary:hover { background: linear-gradient(#ffffff, #ccdaee); }
+ .btn.blue { background: linear-gradient(#2a5d96, #1d4d84); border-color: #123b73; color: #ffffff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2); }
+ .btn.blue:hover { background: linear-gradient(#346bad, #235896); color: #ffffff; border-color: #123b73; }
+ .btn.success { background: linear-gradient(#fefefe, #d7e3f4); border-color: #6d88aa; color: #23466f; }
+ .progress-ring { width: 28px; height: 28px; }
+ /* ── MAIN LAYOUT ── */
+ .workspace {
+ display: grid;
+ grid-template-columns: 220px 4px 1fr 4px 380px;
+ grid-template-rows: 1fr;
+ flex: 1;
+ min-height: 0;
+ overflow: hidden;
+ }
+ /* ── ENCOUNTER LIST (left) ── */
+ .encounter-panel {
+ background: #f4f4f4;
+ border-right: 1px solid var(--border);
+ display: flex; flex-direction: column;
+ overflow: hidden;
+ }
+ .panel-head {
+ height: var(--panel-head);
+ padding: 0 8px;
+ display: flex; align-items: center; gap: 6px;
+ border-bottom: 1px solid var(--border);
+ flex-shrink: 0;
+ font-weight: 700; font-size: 11px; letter-spacing: 0;
+ text-transform: uppercase; color: #ffffff;
+ background: linear-gradient(#2a5d96, #1d4d84);
+ }
+ .panel-head .count { margin-left: auto; }
+ .enc-search {
+ padding: 5px 6px;
+ border-bottom: 1px solid var(--border);
+ flex-shrink: 0;
+ background: #eaeef3;
+ }
+ .search-input {
+ width: 100%; padding: 4px 8px;
+ background: #ffffff; border: 1px solid var(--border);
+ border-radius: 10px; color: var(--text); font-size: 10px;
+ font-family: var(--sans);
+ outline: none;
+ }
+ .search-input:focus { border-color: var(--accent); }
+ .search-input::placeholder { color: var(--text3); }
+ .enc-list { flex: 1; overflow-y: auto; background: #f7f7f7; }
+ .enc-item {
+ padding: 6px 8px;
+ border-bottom: 1px solid #d4dbe3;
+ cursor: pointer; transition: background 0.1s;
+ position: relative;
+ background: #ffffff;
+ }
+ .enc-item:hover { background: #edf4fb; }
+ .enc-item.active { background: #d9ebfb; border-left: 2px solid var(--accent); }
+ .enc-item.active .enc-dos { color: var(--accent); }
+ .enc-num { font-family: var(--sans); font-size: 10px; color: var(--text3); }
+ .enc-dos { font-weight: 700; font-size: 11px; }
+ .enc-provider { font-size: 10px; color: var(--text2); }
+ .enc-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+ .enc-tag { font-size: 9px; padding: 1px 5px; border-radius: 10px; font-family: var(--sans); background: #e6eef8 !important; color: #26456b !important; border-color: #9fb3cb !important; }
+ .enc-status {
+ position: absolute; top: 8px; right: 8px;
+ width: 7px; height: 7px; border-radius: 50%;
+ }
+ .enc-status.done { background: var(--success); }
+ .enc-status.pending { background: var(--warning); }
+ .enc-status.new { background: var(--accent); }
+ /* ── CENTER (PDF + Claims) ── */
+ .center-panel {
+ display: flex; flex-direction: column;
+ overflow: hidden; background: #dcdcdc;
+ }
+ .center-panel.fullscreen {
+ position: fixed;
+ top: 33px; left: 0; right: 0; bottom: 0;
+ z-index: 900;
+ }
+ .center-panel.fullscreen .claims-section,
+ .center-panel.fullscreen .resize-h {
+ display: none !important;
+ }
+ /* PDF toolbar */
+ .pdf-toolbar {
+ height: 30px;
+ background: #eef2f6;
+ border-bottom: 1px solid var(--border);
+ display: flex; align-items: center; gap: 5px;
+ padding: 0 8px; flex-shrink: 0;
+ overflow-x: auto; overflow-y: hidden;
+ }
+ .pdf-toolbar::-webkit-scrollbar { display: none; }
+ .pdf-toolbar .btn { padding: 2px 8px; font-size: 10px; border-radius: 4px; }
+ .pdf-name { font-family: var(--sans); font-size: 10px; color: var(--text2); font-weight: 600; }
+ .page-nav { display: flex; align-items: center; gap: 4px; margin-left: auto; color: var(--text2); }
+ .page-nav input {
+ width: 36px; text-align: center;
+ background: #ffffff; border: 1px solid var(--border);
+ border-radius: 4px; color: var(--text); font-size: 10px;
+ padding: 2px; font-family: var(--sans); outline: none;
+ }
+ /* Center split: PDF top, Claims bottom */
+ .center-split {
+ flex: 1; display: flex; flex-direction: column; min-height: 0;
+ }
+ .pdf-viewer {
+ flex: 1; min-height: 0; overflow: hidden;
+ background: #d9d9d9; position: relative;
+ display: flex; align-items: center; justify-content: center;
+ }
+ .pdf-mock {
+ width: 100%; height: 100%; overflow-y: auto;
+ padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+ }
+ .pdf-page {
+ background: #ffffff; color: #111;
+ width: 100%; max-width: 520px;
+ border-radius: 0;
+ border: 1px solid #9da8b4;
+ box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+ padding: 24px 28px;
+ font-size: 11px; line-height: 1.6;
+ position: relative;
+ }
+ .pdf-page .pdf-header { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1a4470; border-bottom: 2px solid #1a4470; padding-bottom: 6px; }
+ .pdf-page .pdf-section { font-size: 11px; font-weight: 700; margin: 10px 0 4px; color: #333; }
+ .pdf-page .pdf-row { display: flex; gap: 20px; margin-bottom: 2px; }
+ .pdf-page .pdf-label { font-weight: 700; width: 120px; }
+ .pdf-highlight { background: #fff3a5; padding: 1px 2px; border-radius: 2px; }
+ /* Claims section */
+ .claims-section {
+ height: 220px;
+ border-top: 1px solid var(--border);
+ display: flex; flex-direction: column; flex-shrink: 0;
+ background: #f3f3f3;
+ }
+ .claims-section.fullscreen {
+ position: fixed !important;
+ top: 33px !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+ height: calc(100vh - 33px) !important;
+ z-index: 900 !important;
+ border-top: none !important;
+ }
+ .claims-toolbar {
+ height: 30px;
+ display: flex; align-items: center; gap: 5px; padding: 0 8px;
+ border-bottom: 1px solid var(--border); flex-shrink: 0;
+ background: linear-gradient(#eaf0f7, #dbe6f2);
+ overflow-x: auto; overflow-y: hidden;
+ }
+ .claims-toolbar::-webkit-scrollbar { display: none; }
+ .claims-toolbar .section-title { font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0; color: #214d84; }
+ .claims-toolbar .sep { flex: 1; }
+ .filter-chip {
+ padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 600;
+ border: 1px solid var(--border2); background: linear-gradient(#ffffff, #e4ebf5); cursor: pointer;
+ transition: all 0.1s; color: var(--text2);
+ }
+ .filter-chip:hover, .filter-chip.on { background: linear-gradient(#ffffff, #d6e2f3); border-color: var(--accent); color: var(--accent); }
+ .mini-input {
+ padding: 3px 8px; background: #ffffff; border: 1px solid var(--border);
+ border-radius: 10px; color: var(--text); font-size: 10px;
+ font-family: var(--sans); outline: none; width: 130px;
+ }
+ .mini-input:focus { border-color: var(--accent); }
+ /* Data table */
+ .data-table-wrap { flex: 1; overflow: auto; background:#ffffff; }
+ .data-table {
+ width: 100%; border-collapse: collapse;
+ font-size: 10px; font-family: var(--sans);
+ }
+ .data-table th {
+ position: sticky; top: 0; z-index: 5;
+ background: linear-gradient(#2a5d96, #1d4d84);
+ padding: 5px 8px; text-align: left;
+ font-size: 10px; font-weight: 700; letter-spacing: 0;
+ text-transform: none; color: #ffffff;
+ border-bottom: 1px solid #123b73;
+ border-right: 1px solid #3c71a3;
+ white-space: nowrap; cursor: pointer; user-select: none;
+ }
+ .data-table th:hover { color: #ffffff; filter: brightness(0.98); }
+ .data-table td {
+ padding: 4px 8px; border-bottom: 1px solid #d8e0ea; border-right: 1px solid #e0e6ee;
+ white-space: nowrap; color: var(--text);
+ background: #ffffff;
+ }
+ .data-table tr:hover td { background: #eef5fd; }
+ .data-table tr.selected td { background: #d9ebfb; }
+ .cell-icd { color: #214d84; font-weight: 600; }
+ .cell-amt { color: #214d84; text-align: right; }
+ .cell-status { }
+ #claimsTable.hide-col-1 th:nth-child(1), #claimsTable.hide-col-1 td:nth-child(1) { display: none; }
+ #claimsTable.hide-col-2 th:nth-child(2), #claimsTable.hide-col-2 td:nth-child(2) { display: none; }
+ #claimsTable.hide-col-3 th:nth-child(3), #claimsTable.hide-col-3 td:nth-child(3) { display: none; }
+ #claimsTable.hide-col-4 th:nth-child(4), #claimsTable.hide-col-4 td:nth-child(4) { display: none; }
+ #claimsTable.hide-col-5 th:nth-child(5), #claimsTable.hide-col-5 td:nth-child(5) { display: none; }
+ #claimsTable.hide-col-6 th:nth-child(6), #claimsTable.hide-col-6 td:nth-child(6) { display: none; }
+ #claimsTable.hide-col-7 th:nth-child(7), #claimsTable.hide-col-7 td:nth-child(7) { display: none; }
+ #claimsTable.hide-col-8 th:nth-child(8), #claimsTable.hide-col-8 td:nth-child(8) { display: none; }
+ #claimsTable.hide-col-9 th:nth-child(9), #claimsTable.hide-col-9 td:nth-child(9) { display: none; }
+ #claimsTable.hide-col-10 th:nth-child(10), #claimsTable.hide-col-10 td:nth-child(10) { display: none; }
+ #claimsTable.hide-col-11 th:nth-child(11), #claimsTable.hide-col-11 td:nth-child(11) { display: none; }
+ #claimsTable.hide-col-12 th:nth-child(12), #claimsTable.hide-col-12 td:nth-child(12) { display: none; }
+ #claimsTable.hide-col-13 th:nth-child(13), #claimsTable.hide-col-13 td:nth-child(13) { display: none; }
+ #claimsTable.hide-col-14 th:nth-child(14), #claimsTable.hide-col-14 td:nth-child(14) { display: none; }
+ #claimsTable.hide-col-15 th:nth-child(15), #claimsTable.hide-col-15 td:nth-child(15) { display: none; }
+ #claimsTable.hide-col-16 th:nth-child(16), #claimsTable.hide-col-16 td:nth-child(16) { display: none; }
+ #claimsTable.hide-col-17 th:nth-child(17), #claimsTable.hide-col-17 td:nth-child(17) { display: none; }
+ #claimsTable.hide-col-18 th:nth-child(18), #claimsTable.hide-col-18 td:nth-child(18) { display: none; }
+ #claimsTable.hide-col-19 th:nth-child(19), #claimsTable.hide-col-19 td:nth-child(19) { display: none; }
+ #claimsTable.hide-col-20 th:nth-child(20), #claimsTable.hide-col-20 td:nth-child(20) { display: none; }
+ #claimsTable.hide-col-21 th:nth-child(21), #claimsTable.hide-col-21 td:nth-child(21) { display: none; }
+ #claimsTable.hide-col-22 th:nth-child(22), #claimsTable.hide-col-22 td:nth-child(22) { display: none; }
+ #claimsTable.hide-col-23 th:nth-child(23), #claimsTable.hide-col-23 td:nth-child(23) { display: none; }
+ #claimsTable.hide-col-24 th:nth-child(24), #claimsTable.hide-col-24 td:nth-child(24) { display: none; }
+ #claimsTable.hide-col-25 th:nth-child(25), #claimsTable.hide-col-25 td:nth-child(25) { display: none; }
+ #claimsTable.hide-col-26 th:nth-child(26), #claimsTable.hide-col-26 td:nth-child(26) { display: none; }
+ #claimsTable.hide-col-27 th:nth-child(27), #claimsTable.hide-col-27 td:nth-child(27) { display: none; }
+ #claimsTable.hide-col-28 th:nth-child(28), #claimsTable.hide-col-28 td:nth-child(28) { display: none; }
+ .status-pill {
+ display: inline-block; padding: 1px 7px; border-radius: 10px;
+ font-size: 9px; font-weight: 700; letter-spacing: 0;
+ }
+ .status-pill.paid { background: #e1f0df; color: #2f7d32; border:1px solid #b8d2b6; }
+ .status-pill.denied { background: #fde8e8; color: #c53030; border:1px solid #efb7b7; }
+ .status-pill.pending { background: #fff3da; color: #b7791f; border:1px solid #eed29a; }
+ /* ── RIGHT PANEL (Coding) ── */
+ .right-panel {
+ background: #f4f4f4;
+ border-left: 1px solid var(--border);
+ display: flex; flex-direction: column;
+ overflow: hidden;
+ }
+ .right-panel.fullscreen {
+ position: fixed;
+ top: 33px; left: 0; right: 0; bottom: 0;
+ z-index: 900;
+ border-left: none;
+ }
+ /* Tab bar */
+ .tab-bar {
+ display: flex; border-bottom: 1px solid var(--border);
+ background: linear-gradient(#2a5d96, #1d4d84); flex-shrink: 0;
+ overflow-x: auto;
+ }
+ .tab-bar::-webkit-scrollbar { display: none; }
+ .tab-btn {
+ padding: 0 10px; height: var(--tab-h);
+ display: flex; align-items: center; gap: 5px;
+ font-size: 10px; font-weight: 700; cursor: pointer;
+ white-space: nowrap; color: #dce9f7;
+ border-bottom: 2px solid transparent;
+ transition: all 0.15s; flex-shrink: 0;
+ }
+ .tab-btn:hover { color: #ffffff; }
+ .tab-btn.active { color: #ffffff; border-bottom-color: #ffffff; background: rgba(255,255,255,0.08); }
+ .tab-count {
+ font-size: 9px; padding: 1px 5px; border-radius: 8px;
+ background: rgba(255,255,255,0.18); color: #ffffff; font-family: var(--sans);
+ }
+ /* Coding sections */
+ .coding-content { flex: 1; overflow: auto; background:#f8f8f8; }
+ .coding-section { border-bottom: 1px solid var(--border); }
+ .section-header {
+ padding: 6px 8px;
+ display: flex; align-items: center; gap: 6px;
+ cursor: pointer; background: linear-gradient(#eef3f8, #e1e8f0);
+ user-select: none;
+ border-top: 1px solid #ffffff;
+ }
+ .section-header:hover { background: linear-gradient(#f3f6fa, #e5edf6); }
+ .section-icon { font-size: 10px; width: 14px; text-align: center; }
+ .section-label {
+ font-size: 10px; font-weight: 700; letter-spacing: 0;
+ text-transform: uppercase;
+ }
+ .section-actions { margin-left: auto; display: flex; gap: 4px; }
+ .icon-btn {
+ width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+ border: 1px solid #91a5bb; border-radius: 4px;
+ background: linear-gradient(#ffffff, #dfe8f5); cursor: pointer; font-size: 12px;
+ color: #31506f; transition: all 0.1s;
+ box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+ }
+ .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: linear-gradient(#ffffff, #d7e3f4); }
+ .chevron { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+ .chevron.open { transform: rotate(90deg); }
+ .section-body { padding: 6px 8px; background:#f9fbfd; }
+ /* Compact form rows */
+ .form-row {
+ display: grid; gap: 4px; margin-bottom: 4px;
+ align-items: start;
+ }
+ .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+ .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+ .form-row.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+ .form-label { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0; margin-bottom: 1px; }
+ .form-control {
+ width: 100%; padding: 4px 6px;
+ background: #ffffff; border: 1px solid var(--border);
+ border-radius: 3px; color: var(--text); font-size: 10px;
+ font-family: var(--sans); outline: none;
+ transition: border-color 0.15s;
+ }
+ .form-control:focus { border-color: var(--accent); }
+ .form-control::placeholder { color: var(--text3); }
+ .form-select {
+ width: 100%; padding: 4px 6px;
+ background: #ffffff; border: 1px solid var(--border);
+ border-radius: 3px; color: var(--text); font-size: 10px;
+ font-family: var(--sans); outline: none;
+ -webkit-appearance: none; cursor: pointer;
+ }
+ .form-select:focus { border-color: var(--accent); }
+ /* Code entry rows */
+ .code-entries { display: flex; flex-direction: column; gap: 3px; }
+ .code-entry {
+ display: flex; align-items: center; gap: 4px;
+ background: #ffffff; border: 1px solid #cfd8e3;
+ border-radius: 3px; padding: 4px 6px;
+ transition: border-color 0.15s;
+ }
+ .code-entry:hover { border-color: var(--border2); }
+ .code-entry .code-tag {
+ font-family: var(--sans); font-size: 10px; font-weight: 700;
+ min-width: 72px;
+ }
+ .code-entry .code-desc { font-size: 10px; color: var(--text2); flex: 1; }
+ .code-entry .code-hcc { font-family: var(--sans); font-size: 10px; color: var(--accent5); }
+ .code-entry .code-raf { font-family: var(--sans); font-size: 10px; color: #2b6cb0; }
+ .code-entry .del-btn {
+ width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+ border-radius: 3px; cursor: pointer; color: var(--text3); font-size: 12px;
+ transition: all 0.1s;
+ }
+ .code-entry .del-btn:hover { background: #fde8e8; color: var(--danger); }
+ .add-row {
+ display: flex; align-items: center; gap: 4px; margin-top: 4px;
+ }
+ .add-row .form-control { flex: 1; }
+ .add-btn {
+ padding: 4px 8px; border-radius: 4px; border: 1px dashed var(--border2);
+ background: transparent; color: var(--text3); cursor: pointer; font-size: 10px;
+ font-family: var(--sans); transition: all 0.15s; white-space: nowrap;
+ }
+ .add-btn:hover { border-color: var(--accent); color: var(--accent); background: #edf4fb; }
+ /* Gap entries */
+ .gap-entry {
+ background: #f4f8fd; border: 1px solid #cddbf0;
+ border-radius: 3px; padding: 4px 6px; margin-bottom: 3px;
+ display: flex; gap: 6px; align-items: center;
+ }
+ .gap-code { font-family: var(--sans); font-size: 10px; font-weight: 700; color: var(--accent2); min-width: 72px; }
+ .gap-desc { font-size: 10px; color: var(--text2); flex: 1; }
+ .gap-action { display: flex; gap: 3px; }
+ .resolve-btn {
+ padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;
+ border: 1px solid #b9d4bb; color: var(--success);
+ background: #eef9ee; cursor: pointer; transition: all 0.1s;
+ }
+ .resolve-btn:hover { background: #e1f3e1; }
+ .dismiss-btn {
+ padding: 2px 6px; border-radius: 3px; font-size: 10px;
+ border: 1px solid var(--border); color: var(--text3);
+ background: #ffffff; cursor: pointer;
+ }
+ /* DOS tabs inside coding section */
+ .dos-tabs { display: flex; gap: 3px; padding: 5px 8px; border-bottom: 1px solid var(--border); flex-wrap: wrap; background:#edf2f7; }
+ .dos-tab {
+ padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;
+ border: 1px solid var(--border); background: linear-gradient(#ffffff, #e4ebf5); cursor: pointer;
+ color: var(--text2); font-family: var(--sans); transition: all 0.1s;
+ }
+ .dos-tab.active { background: linear-gradient(#ffffff, #d6e2f3); border-color: var(--accent); color: var(--accent); }
+ .dos-tab.add-dos { border-style: dashed; }
+ .dos-tab.add-dos:hover { border-color: var(--accent); color: var(--accent); }
+ /* Summary bar */
+ .summary-bar {
+ padding: 6px 10px;
+ border-top: 1px solid var(--border);
+ background: linear-gradient(#eef3f8, #dde7f1);
+ display: flex; align-items: center; gap: 10px;
+ flex-shrink: 0;
+ }
+ .summary-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+ .summary-val { font-family: var(--sans); font-size: 13px; font-weight: 700; }
+ .summary-lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; letter-spacing: 0; }
+ .summary-div { width: 1px; height: 28px; background: var(--border); }
+ /* Scrollbars */
+ ::-webkit-scrollbar { width: 8px; height: 8px; }
+ ::-webkit-scrollbar-track { background: #e1e1e1; }
+ ::-webkit-scrollbar-thumb { background: #8f8f8f; border-radius: 8px; border: 1px solid #d0d0d0; }
+ ::-webkit-scrollbar-thumb:hover { background: #7b7b7b; }
+ /* Resize handle */
+ .resize-h {
+ height: 4px; background: #b7b7b7; cursor: row-resize; flex-shrink: 0;
+ transition: background 0.15s;
+ }
+ .resize-h:hover { background: var(--accent); }
+ .resize-v {
+ width: 4px; background: #b7b7b7; cursor: col-resize; flex-shrink: 0;
+ transition: background 0.15s;
+ z-index: 100;
+ }
+ .resize-v:hover, .resize-v.active { background: var(--accent); }
+ /* Tooltip */
+ [data-tip] { position: relative; }
+ [data-tip]:hover::after {
+ content: attr(data-tip);
+ position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+ background: #ffffff; border: 1px solid var(--border);
+ padding: 3px 8px; border-radius: 4px; font-size: 10px; color: var(--text);
+ white-space: nowrap; z-index: 200; pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+ }
+ /* Notification toast */
+ .toast {
+ position: fixed; bottom: 16px; right: 16px;
+ background: #ffffff; border: 1px solid #8fb48f;
+ border-radius: 4px; padding: 10px 16px;
+ font-size: 11px; color: #2f7d32; z-index: 999;
+ transform: translateY(60px); opacity: 0;
+ transition: all 0.3s; pointer-events: none; box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+ }
+ .toast.show { transform: translateY(0); opacity: 1; }
+ .col-grip { cursor: col-resize; }
+ /* Enc filter row */
+ .enc-filters { display: flex; gap: 3px; padding: 4px 6px; border-bottom: 1px solid var(--border); flex-wrap: wrap; background:#edf2f7; }
+ /* Highlight active PDF indicator */
+ .pdf-indicator {
+ position: absolute; top: 8px; right: 8px;
+ background: #edf2f7; border: 1px solid #c0ccda;
+ border-radius: 4px; padding: 3px 8px; font-size: 10px; font-family: var(--sans); color: var(--text2);
+ }
+ /* Right panel HCC/CPT entry style */
+ .entry-card {
+ background: #ffffff; border: 1px solid #cfd8e3;
+ border-radius: 4px; padding: 6px 8px; margin-bottom: 4px;
+ }
+ .entry-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+ .entry-card-header .ec-code { font-family: var(--sans); font-size: 11px; font-weight: 700; }
+ .entry-card-header .ec-hcc { font-size: 10px; color: var(--accent5); font-family: var(--sans); }
+ .entry-card-header .ec-raf { font-size: 10px; color: #2b6cb0; font-family: var(--sans); }
+ .entry-card-header .ec-actions { margin-left: auto; display: flex; gap: 3px; }
+ .entry-card-desc { font-size: 10px; color: var(--text2); }
+ .entry-card-meta { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+ .entry-card-meta .meta-pill {
+ font-size: 9px; padding: 1px 6px; border-radius: 3px;
+ background: #edf2f7; color: var(--text2); font-family: var(--sans);
+ }
+  /* Fullscreen-only utility */
+  .fullscreen-only { display: none !important; }
+  .right-panel.fullscreen .fullscreen-only { display: block !important; }
+  /* Fullscreen row refinements */
+  .right-panel.fullscreen .code-entry,
+  .right-panel.fullscreen .gap-entry {
+    gap: 16px !important;
+  }
+  .right-panel.fullscreen .code-desc,
+  .right-panel.fullscreen .gap-desc {
+    flex: 1;
+  }
+  .right-panel.fullscreen .code-tag,
+  .right-panel.fullscreen .gap-code {
+    min-width: 80px;
+  }
+  /* Opportunity Lookup Dropdown */
+  .opp-lookup-wrapper { position: relative; width: 100%; }
+  .opp-lookup-input { width: 100%; padding-right: 24px !important; cursor: pointer; }
+  .opp-lookup-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #c0ccda;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 2000;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+  .opp-lookup-container.active { display: block; }
+  .opp-group-header {
+    background: #f8fafc;
+    padding: 4px 12px;
+    font-weight: 700;
+    font-size: 10px;
+    color: #4a5568;
+    text-transform: uppercase;
+    border-bottom: 1px solid #edf2f7;
+    margin-top: 4px;
+  }
+  .opp-group-header:first-child { margin-top: 0; }
+  .opp-sub-header {
+    padding: 3px 18px;
+    font-weight: 600;
+    font-size: 9px;
+    color: #64748b;
+  }
+  .opp-option {
+    padding: 5px 24px;
+    font-size: 11px;
+    color: #2d3748;
+    cursor: pointer;
+  }
+  .opp-option:hover { background: #ebf5ff; }
+  .opp-lookup-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 8px;
+    color: #a0aec0;
+    pointer-events: none;
+  }
+  /* Hierarchical Dropdown Enhancements */
+  .opp-lookup-container {
+    padding: 0;
+    flex-direction: column;
+    display: none;
+  }
+  .opp-lookup-container.active { display: flex; }
+  .opp-search-box {
+    padding: 8px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .opp-search-box input {
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #cbd5e0;
+    border-radius: 3px;
+  }
+  .opp-list { max-height: 220px; overflow-y: auto; }
+  .opp-item {
+    padding: 6px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f8fafc;
+  }
+  .opp-item:hover { background: #eff6ff; }
+  .opp-item.group {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #4a5568;
+    cursor: default;
+    pointer-events: none;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  .opp-item.subgroup {
+    color: #2b6cb0;
+    font-weight: 600;
+    font-size: 10.5px;
+  }
+  .opp-item.indent-1 { padding-left: 20px; }
+  .opp-item.indent-2 { padding-left: 35px; }
+  .opp-item.hidden { display: none !important; }
+  .opp-item.collapsed-child { display: none !important; }
+  .opp-chevron {
+    font-size: 8px;
+    margin-right: 6px;
+    transition: transform 0.2s;
+    display: inline-block;
+    width: 10px;
+  }
+  .opp-item.collapsed .opp-chevron { transform: rotate(-90deg); }
+</style>
+
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">OS<span>CA</span>R</div>
+  <div class="topbar-divider"></div>
+  <div class="patient-chip">
+    <div>
+      <div class="name">Johnson, Michael A.</div>
+      <div class="meta">DOB: 03/15/1958 &nbsp;|&nbsp; MRN: 0029841 &nbsp;|&nbsp; Plan: Medicare Advantage</div>
+    </div>
+  </div>
+  <div class="badge blue">RAF: 1.842</div>
+  <div class="badge green">HCCs: 12</div>
+  <div class="badge orange">Gaps: 7</div>
+  <div class="badge purple">CPTs: 28</div>
+  <div class="topbar-divider"></div>
+  <div class="badge">Review Year: 2024</div>
+  <div class="topbar-right">
+    <button class="btn" onclick="showToast('Chart Details')">Chart Details</button>
+    <button class="btn" onclick="showToast('Chart History')">Chart History</button>
+    <button class="btn success" onclick="showToast('Encounter submitted for review')">⎘ Quick Guide</button>
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--success);margin-left:4px;" data-tip="Auto-save: Active"></div>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT: ENCOUNTER LIST -->
+  <div class="encounter-panel">
+    <div class="panel-head">
+      📋 Encounters
+      <span class="count"><span class="badge blue">54</span></span>
+    </div>
+    <div class="enc-search">
+      <input class="search-input" placeholder="🔍  Search DOS, provider, ICD..." oninput="filterEnc(this.value)">
+    </div>
+    <div class="enc-list" id="encList"></div>
+  </div>
+
+  <div class="resize-v" id="resizeLeft"></div>
+
+  <!-- CENTER: PDF + CLAIMS -->
+  <div class="center-panel">
+    <!-- PDF Toolbar -->
+    <div class="pdf-toolbar">
+      <button class="btn" onclick="navPage(-1)">◀</button>
+      <button class="btn" onclick="navPage(1)">▶</button>
+      <div class="pdf-name" id="pdfName">ENC-041 — PCP Visit 09/14/2024.pdf</div>
+      <button class="btn" onclick="toggleCenterPanelFullscreen(this)">⛶ Full</button>
+      <button class="btn" onclick="showToast('Annotation mode on')">✏ Annotate</button>
+      <button class="btn" onclick="showToast('Highlight mode on')">🖊 Highlight</button>
+      <div class="page-nav">
+        Pg <input id="pageInput" value="1" style="margin:0 3px"> / <span id="totalPages">6</span>
+        <button class="btn" onclick="showToast('Zoom in')">+</button>
+        <button class="btn" onclick="showToast('Zoom out')">−</button>
+      </div>
+    </div>
+
+    <div class="center-split">
+      <!-- PDF VIEWER -->
+      <div class="pdf-viewer" id="pdfViewer">
+        <div class="pdf-mock" id="pdfMock">
+          <div class="pdf-page">
+            <div class="pdf-indicator">ENC-041 · Pg 1/6</div>
+            <div class="pdf-header">CLINIC VISIT RECORD</div>
+            <div class="pdf-row"><span class="pdf-label">Patient:</span> Johnson, Michael A.</div>
+            <div class="pdf-row"><span class="pdf-label">DOB:</span> 03/15/1958 &nbsp; <span class="pdf-label">DOS:</span> 09/14/2024</div>
+            <div class="pdf-row"><span class="pdf-label">Provider:</span> Dr. Sarah Chen, MD</div>
+            <div class="pdf-row"><span class="pdf-label">Facility:</span> Northview Medical Associates</div>
+            <div class="pdf-section">CHIEF COMPLAINT</div>
+            <p>Patient presents for routine follow-up of <span class="pdf-highlight">Type 2 Diabetes Mellitus with CKD</span> and <span class="pdf-highlight">Congestive Heart Failure, systolic, chronic</span>. Reports shortness of breath on exertion.</p>
+            <div class="pdf-section">DIAGNOSES</div>
+            <p><strong>1.</strong> <span class="pdf-highlight">E11.65 — T2DM with Hyperglycemia</span><br>
+            <strong>2.</strong> <span class="pdf-highlight">I50.22 — Chronic Systolic HF, compensated</span><br>
+            <strong>3.</strong> N18.3 — CKD Stage 3a<br>
+            <strong>4.</strong> I10 — Essential Hypertension<br>
+            <strong>5.</strong> Z87.891 — Personal history of nicotine dependence</p>
+            <div class="pdf-section">PROCEDURES</div>
+            <p>99215 — Office visit, high complexity (45 min)<br>
+            99417 — Prolonged office service (15 min)<br>
+            93000 — Electrocardiogram, routine</p>
+            <div class="pdf-section">PLAN</div>
+            <p>Increase Metformin to 1000mg BID. Cardiology referral placed. Repeat BMP in 4 weeks. Patient counselled on low-sodium diet and fluid restriction. Follow-up in 6 weeks.</p>
+          </div>
+          <div class="pdf-page" style="opacity:0.5;transform:scale(0.97)">
+            <div class="pdf-header">LABORATORY RESULTS — continued</div>
+            <p style="color:#555;font-size:10px;">HbA1c: 8.2% (H) &nbsp; eGFR: 47 &nbsp; BNP: 380 pg/mL (H) &nbsp; K+: 4.2 &nbsp; Na+: 138</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="resize-h" id="resizeH"></div>
+
+      <!-- CLAIMS SECTION -->
+      <div class="claims-section" id="claimsSection">
+        <div class="claims-toolbar">
+          <span class="section-title">💰 Claims Data</span>
+          <span class="sep"></span>
+          <input class="mini-input" placeholder="🔍 Search claims..." oninput="filterClaims(this.value)">
+          <span class="filter-chip on" onclick="toggleClaimsFilter(this,'All')">All</span>
+          <span class="filter-chip" onclick="toggleClaimsFilter(this,'Paid')">Paid</span>
+          <span class="filter-chip" onclick="toggleClaimsFilter(this,'Denied')">Denied</span>
+          <span class="filter-chip" onclick="toggleClaimsFilter(this,'Pending')">Pending</span>
+          <button class="btn" onclick="toggleGroupBy()">⊞ Group: <span id="groupLabel">Provider</span></button>
+          <button class="btn" onclick="toggleColSelector()">⚙ Cols</button>
+          <button class="btn" onclick="toggleClaimsFullscreen(this)" style="margin-left:4px;">⛶ Full</button>
+        </div>
+        <div id="colSelectorPanel" style="display: none; padding: 6px 8px; border-bottom: 1px solid var(--border); background: #ffffff; gap: 12px; flex-wrap: wrap; font-size: 10px; font-family: var(--sans);">
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(1, this.checked)"> Claim ID</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(2, this.checked)"> Patient ID</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(3, this.checked)"> Patient Name</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(4, this.checked)"> Date of Birth</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(5, this.checked)"> Gender</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(6, this.checked)"> Date of Service (DOS)</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(7, this.checked)"> Claim Year</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(8, this.checked)"> Provider Name</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(9, this.checked)"> Provider NPI</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(10, this.checked)"> Facility Name</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(11, this.checked)"> Facility Type</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(12, this.checked)"> Claim Type</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(13, this.checked)"> ICD-10 Codes</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(14, this.checked)"> ICD Descriptions</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(15, this.checked)"> CPT/HCPCS Codes</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(16, this.checked)"> Procedure Descriptions</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(17, this.checked)"> Place of Service (POS)</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(18, this.checked)"> Claim Status</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(19, this.checked)"> Payer Name</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(20, this.checked)"> Payer Type</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(21, this.checked)"> HCC Category Codes</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(22, this.checked)"> RX-HCC Codes</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" checked onchange="toggleTableCol(23, this.checked)"> RAF Score Contribution</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(24, this.checked)"> Encounter Type</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(25, this.checked)"> Chronic Condition Flag</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(26, this.checked)"> Audit Flag</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(27, this.checked)"> Source System</label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="toggleTableCol(28, this.checked)"> Last Updated</label>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table hide-col-2 hide-col-3 hide-col-4 hide-col-5 hide-col-7 hide-col-9 hide-col-10 hide-col-11 hide-col-12 hide-col-14 hide-col-16 hide-col-17 hide-col-20 hide-col-21 hide-col-22 hide-col-24 hide-col-25 hide-col-26 hide-col-27 hide-col-28" id="claimsTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('claimId')">Claim ID ↕</th>
+                <th onclick="sortTable('patientId')">Patient ID</th>
+                <th onclick="sortTable('patientName')">Patient Name</th>
+                <th onclick="sortTable('dob')">Date of Birth</th>
+                <th onclick="sortTable('gender')">Gender</th>
+                <th onclick="sortTable('dos')">Date of Service (DOS) ↕</th>
+                <th onclick="sortTable('claimYear')">Claim Year</th>
+                <th onclick="sortTable('providerName')">Provider Name ↕</th>
+                <th onclick="sortTable('providerNpi')">Provider NPI</th>
+                <th onclick="sortTable('facilityName')">Facility Name</th>
+                <th onclick="sortTable('facilityType')">Facility Type</th>
+                <th onclick="sortTable('claimType')">Claim Type</th>
+                <th onclick="sortTable('icd10')">ICD-10 Codes ↕</th>
+                <th onclick="sortTable('icdDesc')">ICD Descriptions</th>
+                <th onclick="sortTable('cpt')">CPT/HCPCS Codes ↕</th>
+                <th onclick="sortTable('cptDesc')">Procedure Descriptions</th>
+                <th onclick="sortTable('pos')">Place of Service (POS)</th>
+                <th onclick="sortTable('status')">Claim Status ↕</th>
+                <th onclick="sortTable('payerName')">Payer Name</th>
+                <th onclick="sortTable('payerType')">Payer Type</th>
+                <th onclick="sortTable('hcc')">HCC Category Codes</th>
+                <th onclick="sortTable('rxHcc')">RX-HCC Codes</th>
+                <th onclick="sortTable('raf')">RAF Score Contribution ↕</th>
+                <th onclick="sortTable('encType')">Encounter Type</th>
+                <th onclick="sortTable('chronicFlag')">Chronic Condition Flag</th>
+                <th onclick="sortTable('auditFlag')">Audit Flag</th>
+                <th onclick="sortTable('sourceSys')">Source System</th>
+                <th onclick="sortTable('lastUpdated')">Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="claimsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="resize-v" id="resizeRight"></div>
+
+  <!-- RIGHT: CODING PANEL -->
+  <div class="right-panel">
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <div class="tab-btn active" onclick="switchTab(this,'hcc')">ICD <span class="tab-count" id="hccCount">12</span></div>
+      <div class="tab-btn" onclick="switchTab(this,'gaps')">ICD Gaps <span class="tab-count" id="gapCount">7</span></div>
+      <div class="tab-btn" onclick="switchTab(this,'cpt')">CPT <span class="tab-count" id="cptCount">28</span></div>
+      <div class="tab-btn" onclick="switchTab(this,'cptgaps')">CPT Gaps <span class="tab-count" id="cptGapCount">4</span></div>
+      <div style="margin-left: auto; display: flex; align-items: center; padding-right: 8px;">
+        <button class="icon-btn" onclick="toggleRightPanelFullscreen(this)" data-tip="Expand to Full Screen" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); color: #fff; box-shadow: none;">⛶</button>
+      </div>
+    </div>
+
+    <!-- DOS selector -->
+    <div class="dos-tabs" id="dosTabs">
+      <div class="dos-tab active" onclick="switchDOS(this,'09/14/24')">09/14/24</div>
+      <div class="dos-tab" onclick="switchDOS(this,'07/22/24')">07/22/24</div>
+      <div class="dos-tab" onclick="switchDOS(this,'05/10/24')">05/10/24</div>
+      <div class="dos-tab" onclick="switchDOS(this,'03/01/24')">03/01/24</div>
+      <div class="dos-tab add-dos" onclick="addDOS()">＋ DOS</div>
+    </div>
+
+    <!-- Coding content tabs -->
+    <div class="coding-content">
+
+      <!-- HCC TAB -->
+      <div id="tab-hcc">
+        <div class="coding-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span class="chevron open">▶</span>
+            <span class="section-icon">🏷</span>
+            <span class="section-label" style="color:var(--accent2)">ICD CODES</span>
+            <span class="badge blue" style="font-size:9px">12</span>
+          </div>
+          <div class="section-body" id="hccBody">
+            <!-- HCC add form -->
+            <div class="form-row cols-4" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">ICD-10</div>
+                <input class="form-control" id="newICD" placeholder="E11.65" oninput="lookupICD(this.value)" list="icdList">
+              </div>
+              <div>
+                <div class="form-label">HCC Cat</div>
+                <input class="form-control" id="newHCC" placeholder="19">
+              </div>
+              <div>
+                <div class="form-label">RAF Wt</div>
+                <input class="form-control" id="newRAF" placeholder="0.302">
+              </div>
+              <div>
+                <div class="form-label">DOS</div>
+                <input class="form-control" id="newDOS" placeholder="09/14/24">
+              </div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Description</div>
+                <input class="form-control" id="newDesc" placeholder="T2DM with Hyperglycemia" disabled>
+              </div>
+              <div>
+                <div class="form-label">Evidence Source</div>
+                <select class="form-select">
+                  <option>PDF Page 1</option>
+                  <option>Claims</option>
+                  <option>Lab Result</option>
+                  <option>Manual</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Confidence</div>
+                <select class="form-select" id="newConf">
+                  <option>High</option><option>Medium</option><option>Low</option>
+                </select>
+              </div>
+              <div>
+                <div class="form-label">Coder Notes</div>
+                <input class="form-control" placeholder="Notes...">
+              </div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="newICDOpp" placeholder="Flag code..." readonly onclick="toggleOppLookup('newICDOpp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="newICDOpp_dropdown"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:6px; display:flex; justify-content: flex-start;">
+              <button class="btn primary" style="padding: 6px 30px;" onclick="addHCCEntry()">+ Add ICD</button>
+            </div>
+            <div class="code-entries" id="hccEntries"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAPS TAB -->
+      <div id="tab-gaps" style="display:none">
+        <div class="coding-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span class="chevron open">▶</span>
+            <span class="section-icon">⚠</span>
+            <span class="section-label" style="color:var(--accent2)">ICD Gaps</span>
+            <span class="badge blue" style="font-size:9px">7</span>
+          </div>
+          <div class="section-body" id="gapsBody">
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">ICD-10 Gap</div>
+                <input class="form-control" id="newGapICD" placeholder="I50.22" list="icdList">
+              </div>
+              <div>
+                <div class="form-label">HCC Cat</div>
+                <input class="form-control" placeholder="85">
+              </div>
+              <div>
+                <div class="form-label">Gap Type</div>
+                <select class="form-select">
+                  <option>Recapture</option>
+                  <option>New Suspect</option>
+                  <option>Potential</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Description</div>
+                <input class="form-control" placeholder="Chronic Systolic HF" disabled>
+              </div>
+              <div>
+                <div class="form-label">RAF Impact</div>
+                <input class="form-control" placeholder="0.368">
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Priority</div>
+                <select class="form-select"><option>High</option><option>Medium</option><option>Low</option></select>
+              </div>
+              <div>
+                <div class="form-label">Evidence</div>
+                <input class="form-control" placeholder="PDF p.1, Labs">
+              </div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="newGapOpp" placeholder="Flag code..." readonly onclick="toggleOppLookup('newGapOpp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="newGapOpp_dropdown"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:6px; display:flex; justify-content: flex-start;">
+              <button class="btn primary" style="padding: 6px 30px;" onclick="addGapEntry()">+ Add Gap</button>
+            </div>
+            <div id="gapEntries"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPT TAB -->
+      <div id="tab-cpt" style="display:none">
+        <div class="coding-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span class="chevron open">▶</span>
+            <span class="section-icon">💊</span>
+            <span class="section-label" style="color:var(--accent2)">CPT Codes</span>
+            <span class="badge blue" style="font-size:9px">28</span>
+          </div>
+          <div class="section-body">
+            <div class="form-row cols-4" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">CPT Code</div>
+                <input class="form-control" id="newCPT" placeholder="99215" list="cptList">
+              </div>
+              <div>
+                <div class="form-label">Modifier</div>
+                <input class="form-control" placeholder="25">
+              </div>
+              <div>
+                <div class="form-label">Units</div>
+                <input class="form-control" placeholder="1">
+              </div>
+              <div>
+                <div class="form-label">DOS</div>
+                <input class="form-control" placeholder="09/14/24">
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Description</div>
+                <input class="form-control" placeholder="Office visit, high complexity" disabled>
+              </div>
+              <div>
+                <div class="form-label">Linked ICD</div>
+                <input class="form-control" placeholder="E11.65, I50.22">
+              </div>
+              <div>
+                <div class="form-label">Place of Service</div>
+                <select class="form-select"><option>11 - Office</option><option>21 - Inpatient</option><option>22 - Outpatient</option></select>
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Expected $</div>
+                <input class="form-control" placeholder="285.00">
+              </div>
+              <div>
+                <div class="form-label">Coder Notes</div>
+                <input class="form-control" placeholder="Notes...">
+              </div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="newCPTOpp" placeholder="Flag code..." readonly onclick="toggleOppLookup('newCPTOpp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="newCPTOpp_dropdown"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:6px; display:flex; justify-content: flex-start;">
+              <button class="btn primary" style="padding: 6px 30px;" onclick="addCPTEntry()">+ Add CPT</button>
+            </div>
+            <div class="code-entries" id="cptEntries"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPT GAPS TAB -->
+      <div id="tab-cptgaps" style="display:none">
+        <div class="coding-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span class="chevron open">▶</span>
+            <span class="section-icon">🔍</span>
+            <span class="section-label" style="color:var(--accent2)">CPT Gaps</span>
+            <span class="badge blue" style="font-size:9px">4</span>
+          </div>
+          <div class="section-body">
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">CPT Gap</div>
+                <input class="form-control" id="newCPTGap" placeholder="93000" list="cptList">
+              </div>
+              <div>
+                <div class="form-label">Gap Reason</div>
+                <select class="form-select"><option>Missing Procedure</option><option>Under-coded</option><option>Missed Service</option></select>
+              </div>
+              <div>
+                <div class="form-label">Revenue Impact</div>
+                <input class="form-control" placeholder="$142.00">
+              </div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Description</div>
+                <input class="form-control" placeholder="ECG not billed" disabled>
+              </div>
+              <div>
+                <div class="form-label">Evidence</div>
+                <input class="form-control" placeholder="PDF p.2, Orders">
+              </div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Priority</div>
+                <select class="form-select"><option>High</option><option>Medium</option><option>Low</option></select>
+              </div>
+              <div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="newCPTGapOpp" placeholder="Flag code..." readonly onclick="toggleOppLookup('newCPTGapOpp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="newCPTGapOpp_dropdown"></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:6px; display:flex; justify-content: flex-start;">
+              <button class="btn primary" style="padding: 6px 30px;" onclick="addCPTGapEntry()">+ Add CPT Gap</button>
+            </div>
+            <div id="cptGapEntries"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /coding-content -->
+    
+    <datalist id="icdList">
+      <option value="E11.65">T2DM with Hyperglycemia</option>
+      <option value="I50.22">Chronic Systolic HF</option>
+      <option value="N18.3">CKD Stage 3a</option>
+      <option value="I10">Essential Hypertension</option>
+      <option value="J44.1">COPD with Acute Exacerbation</option>
+      <option value="E11.9">Type 2 DM without complications</option>
+      <option value="I25.10">Native coronary artery disease</option>
+    </datalist>
+    <datalist id="cptList">
+      <option value="99215">Office visit, high complexity</option>
+      <option value="93000">ECG, routine</option>
+      <option value="99417">Prolonged service 15min</option>
+      <option value="99490">Chronic Care Management</option>
+      <option value="99484">Behavioral integration</option>
+      <option value="99214">Office/outpatient visit mod mdm</option>
+    </datalist>
+
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar">
+      <div style="display:flex; gap:8px;">
+        <button class="btn blue" onclick="showToast('Encounter submitted successfully')">Submit</button>
+        <button class="btn blue" onclick="showToast('Encounter on hold successfully')">On Hold</button>
+        <button class="btn blue" onclick="showToast('Encounter saved successfully')">Discard</button>
+        <button class="btn blue" onclick="showToast('Encounter saved successfully')">Suspend</button>
+        <button class="btn blue" onclick="showToast('Encounter notes')">Notes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const encounters = [
+  {id:'ENC-054',dos:'11/12/24',provider:'Dr. Chen',tags:['DM','HF'],status:'new'},
+  {id:'ENC-053',dos:'10/29/24',provider:'Dr. Patel',tags:['HTN','CKD'],status:'pending'},
+  {id:'ENC-052',dos:'10/14/24',provider:'Dr. Kim',tags:['COPD'],status:'done'},
+  {id:'ENC-051',dos:'10/01/24',provider:'Dr. Chen',tags:['DM'],status:'done'},
+  {id:'ENC-050',dos:'09/20/24',provider:'Dr. Williams',tags:['CAD','HF'],status:'done'},
+  {id:'ENC-049',dos:'09/14/24',provider:'Dr. Chen',tags:['DM','HF','CKD'],status:'pending'},
+  {id:'ENC-048',dos:'09/01/24',provider:'Dr. Patel',tags:['HTN'],status:'done'},
+  {id:'ENC-047',dos:'08/15/24',provider:'Dr. Kim',tags:['DM','CKD'],status:'done'},
+  {id:'ENC-046',dos:'08/02/24',provider:'Dr. Chen',tags:['HF'],status:'done'},
+  {id:'ENC-045',dos:'07/22/24',provider:'Dr. Williams',tags:['COPD','DM'],status:'done'},
+  {id:'ENC-044',dos:'07/10/24',provider:'Dr. Patel',tags:['CAD'],status:'done'},
+  {id:'ENC-043',dos:'06/28/24',provider:'Dr. Chen',tags:['DM','HTN'],status:'done'},
+  {id:'ENC-042',dos:'06/15/24',provider:'Dr. Kim',tags:['CKD'],status:'done'},
+  {id:'ENC-041',dos:'09/14/24',provider:'Dr. Chen',tags:['DM','HF','CKD'],status:'pending'},
+];
+
+const claims = [
+  { claimId: 'CLM-88401', patientId: 'PID-10023', patientName: 'Johnson, Michael A.', dob: '03/15/1958', gender: 'M', dos: '09/14/24', claimYear: '2024', providerName: 'Dr. Chen', providerNpi: '1098765432', facilityName: 'Northview Medical Associates', facilityType: 'Office', claimType: 'Professional', icd10: 'E11.65, I50.22', icdDesc: 'T2DM with Hyperglycemia, Chronic Systolic HF', cpt: '99215', cptDesc: 'Office visit, high complexity', pos: '11', status: 'paid', payerName: 'UHC MA', payerType: 'Medicare Advantage', hcc: '19, 85', rxHcc: 'None', raf: '0.670', encType: 'Follow-up', chronicFlag: 'Yes', auditFlag: 'No', sourceSys: 'Epic', lastUpdated: '09/20/24' },
+  { claimId: 'CLM-88402', patientId: 'PID-10023', patientName: 'Johnson, Michael A.', dob: '03/15/1958', gender: 'M', dos: '09/14/24', claimYear: '2024', providerName: 'Dr. Chen', providerNpi: '1098765432', facilityName: 'Northview Medical Associates', facilityType: 'Office', claimType: 'Professional', icd10: 'I50.22', icdDesc: 'Chronic Systolic HF', cpt: '93000', cptDesc: 'Electrocardiogram', pos: '11', status: 'paid', payerName: 'UHC MA', payerType: 'Medicare Advantage', hcc: '85', rxHcc: 'None', raf: '0.368', encType: 'Testing', chronicFlag: 'Yes', auditFlag: 'No', sourceSys: 'Epic', lastUpdated: '09/20/24' },
+  { claimId: 'CLM-86210', patientId: 'PID-09882', patientName: 'Smith, Robert J.', dob: '01/10/1950', gender: 'M', dos: '07/22/24', claimYear: '2024', providerName: 'Dr. Williams', providerNpi: '1122334455', facilityName: 'Westside Clinic', facilityType: 'Office', claimType: 'Professional', icd10: 'J44.1', icdDesc: 'COPD with Exacerbation', cpt: '99214', cptDesc: 'Office/outpatient visit mod mdm', pos: '11', status: 'denied', payerName: 'Aetna', payerType: 'Commercial', hcc: '111', rxHcc: 'None', raf: '0.335', encType: 'Acute Visit', chronicFlag: 'Yes', auditFlag: 'Yes', sourceSys: 'Cerner', lastUpdated: '08/01/24' },
+  { claimId: 'CLM-83902', patientId: 'PID-07611', patientName: 'Doe, Jane T.', dob: '05/22/1965', gender: 'F', dos: '05/10/24', claimYear: '2024', providerName: 'Dr. Kim', providerNpi: '1445566778', facilityName: 'Eastview Health', facilityType: 'Office', claimType: 'Professional', icd10: 'N18.3', icdDesc: 'CKD Stage 3a', cpt: '99213', cptDesc: 'Office/outpatient visit low mdm', pos: '11', status: 'paid', payerName: 'Humana', payerType: 'Medicare Advantage', hcc: '137', rxHcc: 'None', raf: '0.236', encType: 'Follow-up', chronicFlag: 'Yes', auditFlag: 'No', sourceSys: 'Epic', lastUpdated: '05/25/24' },
+  { claimId: 'CLM-90012', patientId: 'PID-11005', patientName: 'Brown, Alice D.', dob: '11/05/1970', gender: 'F', dos: '10/29/24', claimYear: '2024', providerName: 'Dr. Patel', providerNpi: '1998877665', facilityName: 'City Hospital', facilityType: 'Outpatient', claimType: 'Professional', icd10: 'I10', icdDesc: 'Essential Hypertension', cpt: '99215', cptDesc: 'Office visit, high complexity', pos: '22', status: 'pending', payerName: 'UHC MA', payerType: 'Medicare Advantage', hcc: 'None', rxHcc: 'None', raf: '0.000', encType: 'Follow-up', chronicFlag: 'Yes', auditFlag: 'No', sourceSys: 'Epic', lastUpdated: '11/02/24' }
+];
+
+const OPPORTUNITY_OPTIONS = [
+  { label: 'Coding Opportunity', type: 'group', depth: 0, id: 'grp1' },
+  { label: 'Cdi Disagree To Coder - ICD', type: 'option', value: 'Coding Opportunity / Cdi Disagree To Coder - ICD', depth: 1, parent: 'grp1' },
+  { label: 'HCC', type: 'group', depth: 0, id: 'grp2' },
+  { label: 'Hierarchical Condition Category', type: 'subgroup', depth: 1, id: 'sub1', parent: 'grp2' },
+  { label: 'HCC - Radiology or Lab', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Radiology or Lab', depth: 2, parent: 'sub1' },
+  { label: 'HCC - Conditions with Active MEAT', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Conditions with Active MEAT', depth: 2, parent: 'sub1' },
+  { label: 'HCC - Specificity', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Specificity', depth: 2, parent: 'sub1' },
+  { label: 'HCC - Combination codes', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Combination codes', depth: 2, parent: 'sub1' },
+  { label: 'HCC - Status codes', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Status codes', depth: 2, parent: 'sub1' },
+  { label: 'HCC - Chronic condition without active MEAT', type: 'option', value: 'HCC / Hierarchical Condition Category / HCC - Chronic condition without active MEAT', depth: 2, parent: 'sub1' },
+];
+
+function toggleOppLookup(id) {
+  const dropdown = document.getElementById(id + '_dropdown');
+  dropdown.classList.toggle('active');
+  if (dropdown.classList.contains('active')) {
+    const search = dropdown.querySelector('.opp-search-box input');
+    if (search) {
+      search.value = '';
+      filterOppOptions(search, id + '_dropdown');
+      setTimeout(() => search.focus(), 10);
+    }
+  }
+  document.querySelectorAll('.opp-lookup-container').forEach(d => {
+    if (d.id !== id + '_dropdown') d.classList.remove('active');
+  });
+}
+
+function toggleOppGroup(groupEl, groupId) {
+  groupEl.classList.toggle('collapsed');
+  const dropdown = groupEl.closest('.opp-lookup-container');
+  const allItems = Array.from(dropdown.querySelectorAll('.opp-item'));
+  
+  // Find all children (recursively if needed, but here we just check parent)
+  const isCollapsed = groupEl.classList.contains('collapsed');
+  
+  function updateChildren(parentId, hide) {
+    allItems.forEach(item => {
+      const p = item.getAttribute('data-parent');
+      if (p === parentId) {
+        item.classList.toggle('collapsed-child', hide);
+        const childGroupId = item.getAttribute('data-group-id');
+        if (childGroupId) {
+          // If this is also a group, and we are showing it, check its own state
+          if (!hide) {
+             const childIsCollapsed = item.classList.contains('collapsed');
+             updateChildren(childGroupId, childIsCollapsed);
+          } else {
+             updateChildren(childGroupId, true);
+          }
+        }
+      }
+    });
+  }
+  
+  updateChildren(groupId, isCollapsed);
+}
+
+function selectOppOption(fieldId, value) {
+  document.getElementById(fieldId).value = value;
+  document.getElementById(fieldId + '_dropdown').classList.remove('active');
+}
+
+function filterOppOptions(input, dropdownId) {
+  const filter = input.value.toLowerCase();
+  const dropdown = document.getElementById(dropdownId);
+  const items = dropdown.querySelectorAll('.opp-item');
+  items.forEach(item => {
+    const text = item.textContent || item.innerText;
+    const isHeader = item.classList.contains('group') || item.classList.contains('subgroup');
+    
+    if (filter.length > 0) {
+      item.classList.remove('collapsed-child'); // Show everything during search
+      if (isHeader) {
+        item.classList.add('hidden');
+      } else {
+        item.classList.toggle('hidden', text.toLowerCase().indexOf(filter) === -1);
+      }
+    } else {
+      item.classList.remove('hidden');
+      // Re-apply collapse states if searching is cleared
+      const parentId = item.getAttribute('data-parent');
+      if (parentId) {
+        const parentEl = dropdown.querySelector(`[data-group-id="${parentId}"]`);
+        if (parentEl && parentEl.classList.contains('collapsed')) {
+          item.classList.add('collapsed-child');
+        } else {
+          // Check siblings/grandparents? Simple version:
+          let curP = parentId;
+          let hidden = false;
+          while(curP) {
+             const pEl = dropdown.querySelector(`[data-group-id="${curP}"]`);
+             if (pEl && pEl.classList.contains('collapsed')) { hidden = true; break; }
+             curP = pEl ? pEl.getAttribute('data-parent') : null;
+          }
+          item.classList.toggle('collapsed-child', hidden);
+        }
+      }
+    }
+  });
+}
+
+function getOppDropdownHtml(inputId, dropdownId) {
+  return `
+    <div class="opp-search-box" onclick="event.stopPropagation()">
+      <input type="text" placeholder="Search categories..." oninput="filterOppOptions(this, '${dropdownId}')">
+    </div>
+    <div class="opp-list">
+      ${OPPORTUNITY_OPTIONS.map(opt => {
+        const classes = ['opp-item', opt.type];
+        if (opt.depth > 0) classes.push('indent-' + opt.depth);
+        
+        let attr = '';
+        if (opt.type === 'option') {
+          attr = `onclick="selectOppOption('${inputId}', '${opt.value.replace(/'/g, "\\'")}')"`;
+        } else {
+          attr = `onclick="event.stopPropagation(); toggleOppGroup(this, '${opt.id}')" data-group-id="${opt.id}"`;
+        }
+        
+        if (opt.parent) attr += ` data-parent="${opt.parent}"`;
+        
+        const chevron = (opt.type === 'group' || opt.type === 'subgroup') ? '<span class="opp-chevron">▼</span>' : '';
+        const icon = opt.type === 'group' ? '📁 ' : (opt.type === 'subgroup' ? '↳ ' : '');
+        
+        return `<div class="${classes.join(' ')}" ${attr}>${chevron}${icon}${opt.label}</div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function initStaticLookups() {
+  const containers = ['newICDOpp_dropdown', 'newGapOpp_dropdown', 'newCPTOpp_dropdown', 'newCPTGapOpp_dropdown'];
+  containers.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const inputId = id.replace('_dropdown', '');
+    el.innerHTML = getOppDropdownHtml(inputId, id);
+  });
+}
+
+// Initial call
+document.addEventListener('DOMContentLoaded', initStaticLookups);
+
+// ── CLOSE ON CLICK OUTSIDE ──
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.opp-lookup-wrapper')) {
+    document.querySelectorAll('.opp-lookup-container').forEach(d => d.classList.remove('active'));
+  }
+});
+
+const hccData = [
+  {icd:'E11.65',desc:'T2DM with Hyperglycemia',hcc:'19',raf:'0.302',dos:'09/14/24',conf:'High',src:'PDF p.1'},
+  {icd:'I50.22',desc:'Chronic Systolic HF, compensated',hcc:'85',raf:'0.368',dos:'09/14/24',conf:'High',src:'PDF p.1'},
+  {icd:'N18.3',desc:'CKD Stage 3a',hcc:'137',raf:'0.236',dos:'09/14/24',conf:'High',src:'PDF p.1'},
+  {icd:'I10',desc:'Essential Hypertension',hcc:'0',raf:'0.000',dos:'09/14/24',conf:'High',src:'Claims'},
+  {icd:'J44.1',desc:'COPD with Acute Exacerbation',hcc:'111',raf:'0.335',dos:'07/22/24',conf:'Medium',src:'Claims'},
+];
+
+const gapData = [
+  {icd:'I50.22',desc:'Systolic HF not recaptured this year',hcc:'85',raf:'0.368',priority:'High',type:'Recapture'},
+  {icd:'E13.65',desc:'Secondary DM with HGC - potential upgrade',hcc:'18',raf:'0.318',priority:'Medium',type:'Potential'},
+  {icd:'G47.33',desc:'Obstructive Sleep Apnea - see labs',hcc:'0',raf:'0.000',priority:'Low',type:'New Suspect'},
+  {icd:'I25.10',desc:'Atherosclerotic CAD - prior hx noted',hcc:'86',raf:'0.298',priority:'High',type:'Recapture'},
+  {icd:'N18.4',desc:'CKD Stage 4 - eGFR trending down',hcc:'136',raf:'0.289',priority:'Medium',type:'Potential'},
+];
+
+const cptData = [
+  {cpt:'99215',desc:'Office visit, high complexity',mod:'25',units:1,dos:'09/14/24',icd:'E11.65',pos:'11'},
+  {cpt:'93000',desc:'ECG, routine',mod:'',units:1,dos:'09/14/24',icd:'I50.22',pos:'11'},
+  {cpt:'99417',desc:'Prolonged service 15min',mod:'',units:2,dos:'09/14/24',icd:'E11.65',pos:'11'},
+];
+
+const cptGapData = [
+  {cpt:'99490',desc:'Chronic Care Management not billed',reason:'Missing Procedure',impact:'$42.50',priority:'High'},
+  {cpt:'99484',desc:'Behavioral integration not captured',reason:'Under-coded',impact:'$68.00',priority:'Medium'},
+  {cpt:'99091',desc:'Remote monitoring data not billed',reason:'Missed Service',impact:'$57.80',priority:'High'},
+  {cpt:'G2211',desc:'Longitudinal care add-on missing',reason:'Missing Procedure',impact:'$16.00',priority:'Low'},
+];
+
+// ── RENDER ENCOUNTERS ──
+function renderEncounters(filter='', statusFilter='All') {
+  const el = document.getElementById('encList');
+  const filtered = encounters.filter(e => {
+    const matchSearch = !filter || e.dos.includes(filter) || e.provider.toLowerCase().includes(filter.toLowerCase()) || e.tags.some(t => t.toLowerCase().includes(filter.toLowerCase()));
+    const matchStatus = statusFilter === 'All' || e.status === statusFilter.toLowerCase();
+    return matchSearch && matchStatus;
+  });
+  el.innerHTML = filtered.map((e,i) => `
+    <div class="enc-item ${i===5?'active':''}" onclick="selectEnc(this,'${e.id}','${e.dos}')">
+      <div class="enc-num">${e.id}</div>
+      <div class="enc-dos">${e.dos}</div>
+      <div class="enc-provider">${e.provider}</div>
+      <div class="enc-tags">${e.tags.map(t=>`<span class="enc-tag badge blue">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function selectEnc(el, id, dos) {
+  document.querySelectorAll('.enc-item').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pdfName').textContent = `${id} — Visit ${dos}.pdf`;
+  showToast(`Loaded ${id}`);
+}
+
+function filterEnc(val) { renderEncounters(val); }
+
+let currentFilter = 'All';
+function toggleFilter(el, val) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  currentFilter = val;
+  renderEncounters(document.querySelector('.enc-search .search-input')?.value || '');
+}
+
+// ── RENDER CLAIMS ──
+function renderClaims(data) {
+  const statusColors = {paid:'paid',denied:'denied',pending:'pending'};
+
+  document.getElementById('claimsBody').innerHTML = data.map((c,i) => {
+    return `
+      <tr onclick="selectClaimRow(this)">
+        <td style="font-family:var(--mono)">${c.claimId}</td>
+        <td>${c.patientId}</td>
+        <td>${c.patientName}</td>
+        <td style="font-family:var(--mono)">${c.dob}</td>
+        <td>${c.gender}</td>
+        <td style="font-family:var(--mono)">${c.dos}</td>
+        <td>${c.claimYear}</td>
+        <td>${c.providerName}</td>
+        <td>${c.providerNpi}</td>
+        <td>${c.facilityName}</td>
+        <td>${c.facilityType}</td>
+        <td>${c.claimType}</td>
+        <td class="cell-icd" data-tip="ICD-10: &quot;${c.icd10}&quot;">${c.icd10}</td>
+        <td>${c.icdDesc}</td>
+        <td class="cell-icd" style="color:var(--accent5)" data-tip="CPT: &quot;${c.cpt}&quot;">${c.cpt}</td>
+        <td>${c.cptDesc}</td>
+        <td>${c.pos}</td>
+        <td><span class="status-pill ${statusColors[c.status] || ''}">${c.status.toUpperCase()}</span></td>
+        <td>${c.payerName}</td>
+        <td>${c.payerType}</td>
+        <td data-tip="HCC: &quot;${c.hcc}&quot;">${c.hcc}</td>
+        <td>${c.rxHcc}</td>
+        <td class="cell-amt" style="text-align:left" data-tip="RAF: &quot;${c.raf}&quot;">${c.raf}</td>
+        <td>${c.encType}</td>
+        <td>${c.chronicFlag}</td>
+        <td>${c.auditFlag}</td>
+        <td>${c.sourceSys}</td>
+        <td style="font-family:var(--mono)">${c.lastUpdated}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function selectClaimRow(tr) {
+  document.querySelectorAll('#claimsTable tr').forEach(r => r.classList.remove('selected'));
+  tr.classList.add('selected');
+}
+
+let groupMode = 'Provider';
+function toggleGroupBy() {
+  const modes = ['None','DOS','Provider','CPT','Status'];
+  groupMode = modes[(modes.indexOf(groupMode)+1)%modes.length];
+  document.getElementById('groupLabel').textContent = groupMode;
+  showToast(`Grouped by ${groupMode}`);
+  applyClaimsFilters();
+}
+
+let currentClaimsFilter = 'All';
+
+function toggleClaimsFilter(el, val) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  currentClaimsFilter = val;
+  applyClaimsFilters();
+}
+
+function filterClaims(val) {
+  applyClaimsFilters();
+}
+
+function applyClaimsFilters() {
+  const searchVal = document.querySelector('.claims-toolbar .mini-input')?.value || '';
+  const val = searchVal.toLowerCase();
+  const statusFilter = currentClaimsFilter.toLowerCase();
+  
+  let filtered = claims.filter(c => {
+    const matchesSearch = !val || Object.values(c).some(v => String(v).toLowerCase().includes(val));
+    const matchesStatus = statusFilter === 'all' || (c.status || '').toLowerCase() === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const groupFieldMap = { 'DOS': 'dos', 'Provider': 'providerName', 'CPT': 'cpt', 'Status': 'status' };
+  if (groupMode !== 'None' && groupFieldMap[groupMode]) {
+    const field = groupFieldMap[groupMode];
+    filtered.sort((a,b) => String(a[field]||'').localeCompare(String(b[field]||'')));
+  }
+
+  renderClaims(filtered);
+}
+
+function linkClaim(id) { showToast(`Claim ${id} linked to current encounter`); }
+function sortTable(col) { showToast(`Sorted by ${col}`); }
+
+function toggleColSelector() {
+  const panel = document.getElementById('colSelectorPanel');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'flex';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function toggleTableCol(colIdx, isVisible) {
+  const table = document.getElementById('claimsTable');
+  if (isVisible) {
+    table.classList.remove('hide-col-' + colIdx);
+  } else {
+    table.classList.add('hide-col-' + colIdx);
+  }
+}
+
+// ── RENDER HCC ──
+let editingICDIndex = -1;
+
+function renderHCC() {
+  const isFullscreen = document.querySelector('.right-panel')?.classList.contains('fullscreen');
+  document.getElementById('hccEntries').innerHTML = hccData.map((h,i) => {
+    if (i === editingICDIndex) {
+      return `
+        <div class="code-entry" style="flex-direction:column; align-items:stretch; border-color:var(--accent); background:#f4f8fd;">
+          <div style="display:flex; align-items:center; gap:4px; margin-bottom: 6px; width: 100%;">
+            <span class="code-tag" style="color:var(--accent2)">${h.icd}</span>
+            <span class="code-desc">${h.desc}</span>
+            <span class="code-hcc">HCC${h.hcc}</span>
+            <span class="code-raf">+${h.raf}</span>
+            <span style="font-size:9px;color:var(--text3);font-family:var(--mono)">${h.dos}</span>
+          </div>
+          <div style="border-top: 1px dashed #c0ccda; padding-top: 8px;">
+            <div class="form-row cols-4" style="margin-bottom:6px">
+              <div><div class="form-label">ICD-10</div><input class="form-control" id="editICD_icd" value="${h.icd}" list="icdList"></div>
+              <div><div class="form-label">HCC Cat</div><input class="form-control" id="editICD_hcc" value="${h.hcc || ''}"></div>
+              <div><div class="form-label">RAF Wt</div><input class="form-control" id="editICD_raf" value="${h.raf || ''}"></div>
+              <div><div class="form-label">DOS</div><input class="form-control" id="editICD_dos" value="${h.dos || ''}"></div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div><div class="form-label">Description</div><input class="form-control" id="editICD_desc" value="${h.desc || ''}" disabled></div>
+              <div>
+                <div class="form-label">Evidence Source</div>
+                <select class="form-select" id="editICD_src">
+                  <option ${h.src === 'PDF Page 1' ? 'selected' : ''}>PDF Page 1</option>
+                  <option ${h.src === 'Claims' ? 'selected' : ''}>Claims</option>
+                  <option ${h.src === 'Lab Result' ? 'selected' : ''}>Lab Result</option>
+                  <option ${h.src === 'Manual' ? 'selected' : ''}>Manual</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div>
+                <div class="form-label">Confidence</div>
+                <select class="form-select" id="editICD_conf">
+                  <option ${h.conf === 'High' ? 'selected' : ''}>High</option>
+                  <option ${h.conf === 'Medium' ? 'selected' : ''}>Medium</option>
+                  <option ${h.conf === 'Low' ? 'selected' : ''}>Low</option>
+                </select>
+              </div>
+              <div><div class="form-label">Coder Notes</div><input class="form-control" id="editICD_notes" value="${h.notes || ''}"></div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="editICD_opp" value="${h.opp || ''}" readonly onclick="toggleOppLookup('editICD_opp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="editICD_opp_dropdown">
+                    ${getOppDropdownHtml('editICD_opp', 'editICD_opp_dropdown')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; justify-content:flex-start; margin-top:2px;">
+              <button class="btn" style="width:80px; justify-content:center; height:22px;" onclick="cancelEditICD()">Cancel</button>
+              <button class="btn primary" style="width:100px; justify-content:center; height:22px;" onclick="updateICD(${i})">Update ICD</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="code-entry">
+        <span class="code-tag" style="color:var(--accent2)" data-tip="ICD: &quot;${h.icd}&quot;">${h.icd}</span>
+        <span class="code-desc" data-tip="Description: &quot;${h.desc}&quot;">${h.desc}</span>
+        <span class="code-hcc fullscreen-only" data-tip="HCC: &quot;${h.hcc}&quot;">HCC${h.hcc}</span>
+        <span class="code-raf fullscreen-only" data-tip="RAF: &quot;${h.raf}&quot;">+${h.raf}</span>
+        <span class="fullscreen-only" style="font-size:9px;color:var(--text3);font-family:var(--mono)" data-tip="DOS: &quot;${h.dos}&quot;">${h.dos}</span>
+        <button class="resolve-btn" onclick="editICD(${i})">🖊</button>
+        <span class="del-btn" onclick="removeHCC(${i})">✕</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function addHCC() { showToast('Scroll to add ICD form'); }
+function addHCCEntry() {
+  const icd = document.getElementById('newICD').value || 'Z87.891';
+  const hcc = document.getElementById('newHCC').value || '0';
+  const raf = document.getElementById('newRAF').value || '0.000';
+  const opp = document.getElementById('newICDOpp').value || '';
+  hccData.push({icd,desc:'New diagnosis',hcc,raf,dos:'09/14/24',conf:'Medium',src:'Manual',opp});
+  renderHCC();
+  document.getElementById('newICD').value='';
+  showToast(`HCC ${icd} added`);
+}
+function removeHCC(i) { hccData.splice(i,1); renderHCC(); showToast('HCC removed'); }
+function lookupICD(val) {
+  const icdMap = {
+    'E11.65': 'T2DM with Hyperglycemia',
+    'I50.22': 'Chronic Systolic HF',
+    'N18.3': 'CKD Stage 3a',
+    'I10': 'Essential Hypertension',
+    'J44.1': 'COPD with Acute Exacerbation'
+  };
+  if(icdMap[val]) {
+    document.getElementById('newDesc').value = icdMap[val];
+  }
+}
+
+// ── RENDER GAPS ──
+let editingGapIndex = -1;
+function renderGaps() {
+  const isFullscreen = document.querySelector('.right-panel')?.classList.contains('fullscreen');
+  document.getElementById('gapEntries').innerHTML = gapData.map((g,i) => {
+    if (i === editingGapIndex) {
+      return `
+        <div class="gap-entry" style="flex-direction:column; align-items:stretch; border-color:var(--accent); background:#f4f8fd;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom: 6px;">
+            <span class="gap-code" style="color:var(--accent2)">${g.icd}</span>
+            <div style="flex:1">
+              <div style="font-size:10px;color:var(--text)">${g.desc}</div>
+              <div style="font-size:9px;color:var(--text3);font-family:var(--mono)">HCC${g.hcc} · RAF+${g.raf} · ${g.type} · ${g.priority}</div>
+            </div>
+          </div>
+          <div style="border-top: 1px dashed #c0ccda; padding-top: 8px;">
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">ICD-10 Gap</div><input class="form-control" id="editGap_icd" value="${g.icd}" list="icdList"></div>
+              <div><div class="form-label">HCC Cat</div><input class="form-control" id="editGap_hcc" value="${g.hcc}"></div>
+              <div>
+                <div class="form-label">Gap Type</div>
+                <select class="form-select" id="editGap_type">
+                  <option ${g.type === 'Recapture' ? 'selected' : ''}>Recapture</option>
+                  <option ${g.type === 'New Suspect' ? 'selected' : ''}>New Suspect</option>
+                  <option ${g.type === 'Potential' ? 'selected' : ''}>Potential</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols-2" style="margin-bottom:6px">
+              <div><div class="form-label">Description</div><input class="form-control" id="editGap_desc" value="${g.desc}" disabled></div>
+              <div><div class="form-label">RAF Impact</div><input class="form-control" id="editGap_raf" value="${g.raf}"></div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">Priority</div><select class="form-select" id="editGap_priority"><option ${g.priority === 'High' ? 'selected' : ''}>High</option><option ${g.priority === 'Medium' ? 'selected' : ''}>Medium</option><option ${g.priority === 'Low' ? 'selected' : ''}>Low</option></select></div>
+              <div><div class="form-label">Evidence</div><input class="form-control" id="editGap_evidence" value="${g.evidence || ''}"></div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="editGap_opp" value="${g.opp || ''}" readonly onclick="toggleOppLookup('editGap_opp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="editGap_opp_dropdown">
+                    ${OPPORTUNITY_OPTIONS.map(opt => {
+                      if (opt.type === 'group') return `<div class="opp-group-header">${opt.label}</div>`;
+                      if (opt.type === 'subgroup') return `<div class="opp-sub-header">↳ ${opt.label}</div>`;
+                      return `<div class="opp-option" onclick="selectOppOption('editGap_opp', '${opt.value}')">${opt.label}</div>`;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; justify-content:flex-start; margin-top:2px;">
+              <button class="btn" style="width:80px; justify-content:center; height:22px;" onclick="cancelEditGap()">Cancel</button>
+              <button class="btn primary" style="width:100px; justify-content:center; height:22px;" onclick="updateGap(${i})">Update Gap</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="gap-entry ${i===2?'resolved':''}">
+        <span class="gap-code" style="color:var(--accent2)" data-tip="ICD Gap: &quot;${g.icd}&quot;">${g.icd}</span>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text)" data-tip="Description: &quot;${g.desc}&quot;">${g.desc}</div>
+          <div class="fullscreen-only" style="font-size:9px;color:var(--text3);font-family:var(--mono)">
+            <span data-tip="HCC: &quot;${g.hcc}&quot;">HCC${g.hcc}</span> · 
+            <span data-tip="RAF Impact: &quot;${g.raf}&quot;">RAF+${g.raf}</span> · 
+            <span data-tip="Gap Type: &quot;${g.type}&quot;">${g.type}</span> · 
+            <span data-tip="Priority: &quot;${g.priority}&quot;">${g.priority}</span>
+          </div>
+        </div>
+        <div class="gap-action">
+          <button class="resolve-btn" onclick="editGap(${i})">🖊</button>
+          <button class="dismiss-btn" onclick="dismissGap(${i})">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addGapEntry() {
+  const opp = document.getElementById('newGapOpp')?.value || '';
+  gapData.push({icd:'I50.22',desc:'New gap entry',hcc:'85',raf:'0.368',priority:'High',type:'Recapture',opp});
+  renderGaps();
+  showToast('Gap added');
+}
+function resolveGap(i) { showToast(`Gap ${gapData[i].icd} resolved`); }
+function dismissGap(i) { gapData.splice(i,1); renderGaps(); showToast('Gap dismissed'); }
+
+// ── RENDER CPT ──
+let editingCPTIndex = -1;
+function renderCPT() {
+  const isFullscreen = document.querySelector('.right-panel')?.classList.contains('fullscreen');
+  document.getElementById('cptEntries').innerHTML = cptData.map((c,i) => {
+    if (i === editingCPTIndex) {
+      return `
+        <div class="code-entry" style="flex-direction:column; align-items:stretch; border-color:var(--accent); background:#f4f8fd;">
+          <div style="display:flex; align-items:center; gap:4px; margin-bottom: 6px; width: 100%;">
+            <span class="code-tag" style="color:var(--accent2)">${c.cpt}</span>
+            <span class="code-desc">${c.desc}</span>
+            <span style="font-size:9px;padding:1px 4px;background:var(--surface3);border-radius:3px;font-family:var(--mono)">Mod:${c.mod || 'None'}</span>
+            <span style="font-size:9px;color:var(--text3);font-family:var(--mono)">x${c.units}</span>
+          </div>
+          <div style="border-top: 1px dashed #c0ccda; padding-top: 8px;">
+            <div class="form-row cols-4" style="margin-bottom:6px">
+              <div><div class="form-label">CPT Code</div><input class="form-control" id="editCPT_cpt" value="${c.cpt}" list="cptList"></div>
+              <div><div class="form-label">Modifier</div><input class="form-control" id="editCPT_mod" value="${c.mod}"></div>
+              <div><div class="form-label">Units</div><input class="form-control" id="editCPT_units" value="${c.units}"></div>
+              <div><div class="form-label">DOS</div><input class="form-control" id="editCPT_dos" value="${c.dos}"></div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">Description</div><input class="form-control" id="editCPT_desc" value="${c.desc}" disabled></div>
+              <div><div class="form-label">Linked ICD</div><input class="form-control" id="editCPT_icd" value="${c.icd}"></div>
+              <div>
+                <div class="form-label">Place of Service</div>
+                <select class="form-select" id="editCPT_pos">
+                  <option ${c.pos === '11' ? 'selected' : ''} value="11">11 - Office</option>
+                  <option ${c.pos === '21' ? 'selected' : ''} value="21">21 - Inpatient</option>
+                  <option ${c.pos === '22' ? 'selected' : ''} value="22">22 - Outpatient</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">Expected $</div><input class="form-control" id="editCPT_expected" value="${c.expected || ''}"></div>
+              <div><div class="form-label">Coder Notes</div><input class="form-control" id="editCPT_notes" value="${c.notes || ''}"></div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="editCPT_opp" value="${c.opp || ''}" readonly onclick="toggleOppLookup('editCPT_opp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="editCPT_opp_dropdown">
+                    ${OPPORTUNITY_OPTIONS.map(opt => {
+                      if (opt.type === 'group') return `<div class="opp-group-header">${opt.label}</div>`;
+                      if (opt.type === 'subgroup') return `<div class="opp-sub-header">↳ ${opt.label}</div>`;
+                      return `<div class="opp-option" onclick="selectOppOption('editCPT_opp', '${opt.value}')">${opt.label}</div>`;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; justify-content:flex-start; margin-top:2px;">
+              <button class="btn" style="width:80px; justify-content:center; height:22px;" onclick="cancelEditCPT()">Cancel</button>
+              <button class="btn primary" style="width:100px; justify-content:center; height:22px;" onclick="updateCPT(${i})">Update CPT</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="code-entry">
+        <span class="code-tag" style="color:var(--accent2)" data-tip="CPT: &quot;${c.cpt}&quot;">${c.cpt}</span>
+        <span class="code-desc" data-tip="Description: &quot;${c.desc}&quot;">${c.desc}</span>
+        ${c.mod?`<span class="fullscreen-only" style="font-size:9px;padding:1px 4px;background:var(--surface3);border-radius:3px;font-family:var(--mono)" data-tip="Modifier: &quot;${c.mod}&quot;">Mod:${c.mod}</span>`:''}
+        <span class="fullscreen-only" style="font-size:9px;color:var(--text3);font-family:var(--mono)" data-tip="Units: &quot;${c.units}&quot;">x${c.units}</span>
+        <span class="fullscreen-only" style="font-size:9px;color:var(--text3);font-family:var(--mono);margin-left:4px;" data-tip="DOS: &quot;${c.dos}&quot;">${c.dos}</span>
+        <button class="resolve-btn" onclick="editCPT(${i})">🖊</button>
+        <span class="del-btn" onclick="removeCPT(${i})">✕</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function addCPTEntry() {
+  const cpt = document.getElementById('newCPT').value || '99490';
+  const opp = document.getElementById('newCPTOpp')?.value || '';
+  cptData.push({cpt,desc:'New procedure',mod:'',units:1,dos:'09/14/24',icd:'E11.65',pos:'11',opp});
+  renderCPT();
+  document.getElementById('newCPT').value='';
+  showToast(`CPT ${cpt} added`);
+}
+function removeCPT(i) { cptData.splice(i,1); renderCPT(); }
+
+// ── RENDER CPT GAPS ──
+let editingCPTGapIndex = -1;
+function renderCPTGaps() {
+  const isFullscreen = document.querySelector('.right-panel')?.classList.contains('fullscreen');
+  document.getElementById('cptGapEntries').innerHTML = cptGapData.map((g,i) => {
+    if (i === editingCPTGapIndex) {
+      return `
+        <div class="gap-entry" style="flex-direction:column; align-items:stretch; border-color:var(--accent); background:#f4f8fd;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom: 6px;">
+            <span class="gap-code" style="color:var(--accent2)">${g.cpt}</span>
+            <div style="flex:1">
+              <div style="font-size:10px;color:var(--text)">${g.desc}</div>
+              <div style="font-size:9px;color:var(--text3);font-family:var(--mono)">${g.reason} · ${g.impact} · ${g.priority}</div>
+            </div>
+          </div>
+          <div style="border-top: 1px dashed #c0ccda; padding-top: 8px;">
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">CPT Gap</div><input class="form-control" id="editCPTGap_cpt" value="${g.cpt}" list="cptList"></div>
+              <div>
+                <div class="form-label">Gap Reason</div>
+                <select class="form-select" id="editCPTGap_reason">
+                  <option ${g.reason === 'Missing Procedure' ? 'selected' : ''}>Missing Procedure</option>
+                  <option ${g.reason === 'Under-coded' ? 'selected' : ''}>Under-coded</option>
+                  <option ${g.reason === 'Missed Service' ? 'selected' : ''}>Missed Service</option>
+                </select>
+              </div>
+              <div><div class="form-label">Revenue Impact</div><input class="form-control" id="editCPTGap_impact" value="${g.impact}"></div>
+            </div>
+            <div class="form-row cols-3" style="margin-bottom:6px">
+              <div><div class="form-label">Description</div><input class="form-control" id="editCPTGap_desc" value="${g.desc}" disabled></div>
+              <div><div class="form-label">Evidence</div><input class="form-control" id="editCPTGap_evidence" value="${g.evidence || ''}"></div>
+              <div>
+                <div class="form-label">Opportunity Type</div>
+                <div class="opp-lookup-wrapper">
+                  <input class="form-control opp-lookup-input" id="editCPTGap_opp" value="${g.opp || ''}" readonly onclick="toggleOppLookup('editCPTGap_opp')">
+                  <span class="opp-lookup-arrow">▼</span>
+                  <div class="opp-lookup-container" id="editCPTGap_opp_dropdown">
+                    ${getOppDropdownHtml('editCPTGap_opp', 'editCPTGap_opp_dropdown')}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:2px">
+              <div style="display:flex; gap:6px; justify-content:flex-start; align-items:flex-end;">
+                <div>
+                  <div class="form-label">Priority</div>
+                  <select class="form-select" id="editCPTGap_priority">
+                    <option ${g.priority === 'High' ? 'selected' : ''}>High</option>
+                    <option ${g.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+                    <option ${g.priority === 'Low' ? 'selected' : ''}>Low</option>
+                  </select>
+                </div>
+                <div style="display:flex; gap:6px; margin-bottom: 0;">
+                  <button class="btn" style="height:22px; padding:4px 12px" onclick="cancelEditCPTGap()">Cancel</button>
+                  <button class="btn primary" style="height:22px; padding:4px 12px" onclick="updateCPTGap(${i})">Update CPT Gap</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="gap-entry">
+        <span class="gap-code" style="color:var(--accent2)" data-tip="CPT Gap: &quot;${g.cpt}&quot;">${g.cpt}</span>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text)" data-tip="Description: &quot;${g.desc}&quot;">${g.desc}</div>
+          <div class="fullscreen-only" style="font-size:9px;color:var(--text3);font-family:var(--mono)">
+            <span data-tip="Gap Reason: &quot;${g.reason}&quot;">${g.reason}</span> · 
+            <span data-tip="Revenue Impact: &quot;${g.impact}&quot;">${g.impact}</span> · 
+            <span data-tip="Priority: &quot;${g.priority}&quot;">${g.priority}</span>
+          </div>
+        </div>
+        <div class="gap-action">
+          <button class="resolve-btn" onclick="editCPTGap(${i})">🖊</button>
+          <button class="dismiss-btn" onclick="removeCPTGap(${i})">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addCPTGapEntry() {
+  const opp = document.getElementById('newCPTGapOpp')?.value || '';
+  cptGapData.push({cpt:'G0439',desc:'New CPT gap',reason:'Missing Procedure',impact:'$0.00',priority:'Low',opp});
+  renderCPTGaps();
+  showToast('CPT Gap added');
+}
+function removeCPTGap(i) { cptGapData.splice(i,1); renderCPTGaps(); }
+
+// ── EDIT ACTIONS ──
+function expandCodingPanel() {
+  const panel = document.querySelector('.right-panel');
+  if (!panel.classList.contains('fullscreen')) {
+    const btn = document.querySelector('.tab-bar button.icon-btn');
+    if (btn) toggleRightPanelFullscreen(btn);
+  }
+}
+function editICD(i) { editingICDIndex = i; renderHCC(); }
+function cancelEditICD() { editingICDIndex = -1; renderHCC(); }
+function updateICD(i) {
+  hccData[i].icd = document.getElementById('editICD_icd').value;
+  hccData[i].hcc = document.getElementById('editICD_hcc').value;
+  hccData[i].raf = document.getElementById('editICD_raf').value;
+  hccData[i].dos = document.getElementById('editICD_dos').value;
+  hccData[i].desc = document.getElementById('editICD_desc').value;
+  hccData[i].src = document.getElementById('editICD_src').value;
+  hccData[i].conf = document.getElementById('editICD_conf').value;
+  hccData[i].notes = document.getElementById('editICD_notes').value;
+  hccData[i].opp = document.getElementById('editICD_opp').value;
+  editingICDIndex = -1;
+  renderHCC();
+  showToast('ICD updated successfully');
+}
+function editGap(i) { editingGapIndex = i; renderGaps(); }
+function cancelEditGap() { editingGapIndex = -1; renderGaps(); }
+function updateGap(i) {
+  gapData[i].icd = document.getElementById('editGap_icd').value;
+  gapData[i].hcc = document.getElementById('editGap_hcc').value;
+  gapData[i].type = document.getElementById('editGap_type').value;
+  gapData[i].desc = document.getElementById('editGap_desc').value;
+  gapData[i].raf = document.getElementById('editGap_raf').value;
+  gapData[i].priority = document.getElementById('editGap_priority').value;
+  gapData[i].evidence = document.getElementById('editGap_evidence').value;
+  gapData[i].opp = document.getElementById('editGap_opp').value;
+  editingGapIndex = -1;
+  renderGaps();
+  showToast('Gap updated successfully');
+}
+
+function editCPT(i) { editingCPTIndex = i; renderCPT(); }
+function cancelEditCPT() { editingCPTIndex = -1; renderCPT(); }
+function updateCPT(i) {
+  cptData[i].cpt = document.getElementById('editCPT_cpt').value;
+  cptData[i].mod = document.getElementById('editCPT_mod').value;
+  cptData[i].units = document.getElementById('editCPT_units').value;
+  cptData[i].dos = document.getElementById('editCPT_dos').value;
+  cptData[i].desc = document.getElementById('editCPT_desc').value;
+  cptData[i].icd = document.getElementById('editCPT_icd').value;
+  cptData[i].pos = document.getElementById('editCPT_pos').value;
+  cptData[i].expected = document.getElementById('editCPT_expected').value;
+  cptData[i].notes = document.getElementById('editCPT_notes').value;
+  cptData[i].opp = document.getElementById('editCPT_opp').value;
+  editingCPTIndex = -1;
+  renderCPT();
+  showToast('CPT updated successfully');
+}
+
+function editCPTGap(i) { editingCPTGapIndex = i; renderCPTGaps(); }
+function cancelEditCPTGap() { editingCPTGapIndex = -1; renderCPTGaps(); }
+function updateCPTGap(i) {
+  cptGapData[i].cpt = document.getElementById('editCPTGap_cpt').value;
+  cptGapData[i].reason = document.getElementById('editCPTGap_reason').value;
+  cptGapData[i].impact = document.getElementById('editCPTGap_impact').value;
+  cptGapData[i].desc = document.getElementById('editCPTGap_desc').value;
+  cptGapData[i].evidence = document.getElementById('editCPTGap_evidence').value;
+  cptGapData[i].priority = document.getElementById('editCPTGap_priority').value;
+  cptGapData[i].opp = document.getElementById('editCPTGap_opp').value;
+  editingCPTGapIndex = -1;
+  renderCPTGaps();
+  showToast('CPT Gap updated successfully');
+}
+
+// ── TABS ──
+const tabs = ['hcc','gaps','cpt','cptgaps'];
+function switchTab(el, tab) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  tabs.forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if(el) el.style.display = t===tab ? '' : 'none';
+  });
+}
+
+// ── DOS ──
+function switchDOS(el, dos) {
+  document.querySelectorAll('.dos-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast(`Switched to DOS ${dos}`);
+}
+function addDOS() {
+  const tabs = document.getElementById('dosTabs');
+  const newDos = '12/01/24';
+  const tab = document.createElement('div');
+  tab.className = 'dos-tab active';
+  tab.textContent = newDos;
+  tab.onclick = () => switchDOS(tab, newDos);
+  tabs.insertBefore(tab, tabs.lastElementChild);
+  switchDOS(tab, newDos);
+}
+
+// ── SECTIONS ──
+function toggleSection(header) {
+  const chevron = header.querySelector('.chevron');
+  const body = header.nextElementSibling;
+  if(body) body.style.display = body.style.display === 'none' ? '' : 'none';
+  chevron.classList.toggle('open');
+}
+
+// ── PDF NAV ──
+let currentPage = 1, totalPagesVal = 6;
+function navPage(dir) {
+  currentPage = Math.max(1, Math.min(totalPagesVal, currentPage+dir));
+  document.getElementById('pageInput').value = currentPage;
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ '+msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── RESIZE (PDF / Claims) ──
+const resizeEl = document.getElementById('resizeH');
+let isResizing = false, startY = 0, startH = 0;
+resizeEl.addEventListener('mousedown', e => {
+  isResizing = true;
+  startY = e.clientY;
+  startH = document.getElementById('claimsSection').offsetHeight;
+  document.body.style.cursor = 'row-resize';
+});
+document.addEventListener('mousemove', e => {
+  if(!isResizing) return;
+  const diff = startY - e.clientY;
+  const newH = Math.max(100, Math.min(400, startH + diff));
+  document.getElementById('claimsSection').style.height = newH+'px';
+});
+document.addEventListener('mouseup', () => {
+  isResizing = false;
+  if (typeof isResizingLeft === 'undefined' || (!isResizingLeft && !isResizingRight)) document.body.style.cursor = '';
+});
+
+// ── RESIZE VERTICAL (Panels) ──
+const grid = document.querySelector('.workspace');
+const resizeLeft = document.getElementById('resizeLeft');
+const resizeRight = document.getElementById('resizeRight');
+let isResizingLeft = false, isResizingRight = false;
+let startX = 0, startWLeft = 220, startWRight = 380;
+
+resizeLeft.addEventListener('mousedown', e => {
+  isResizingLeft = true;
+  resizeLeft.classList.add('active');
+  startX = e.clientX;
+  document.body.style.cursor = 'col-resize';
+});
+resizeRight.addEventListener('mousedown', e => {
+  isResizingRight = true;
+  resizeRight.classList.add('active');
+  startX = e.clientX;
+  document.body.style.cursor = 'col-resize';
+});
+
+document.addEventListener('mousemove', e => {
+  if (isResizingLeft) {
+    const diff = e.clientX - startX;
+    const newW = Math.max(150, Math.min(500, startWLeft + diff));
+    grid.style.gridTemplateColumns = `${newW}px 4px 1fr 4px ${startWRight}px`;
+  }
+  if (isResizingRight) {
+    const diff = startX - e.clientX;
+    const newW = Math.max(250, Math.min(700, startWRight + diff));
+    grid.style.gridTemplateColumns = `${startWLeft}px 4px 1fr 4px ${newW}px`;
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  if (isResizingLeft) {
+    isResizingLeft = false;
+    resizeLeft.classList.remove('active');
+    startWLeft = parseInt(grid.style.gridTemplateColumns.split(' ')[0]) || startWLeft;
+  }
+  if (isResizingRight) {
+    isResizingRight = false;
+    resizeRight.classList.remove('active');
+    startWRight = parseInt(grid.style.gridTemplateColumns.split(' ')[4]) || startWRight;
+  }
+  if(!isResizing) document.body.style.cursor = '';
+});
+
+// ── FULLSCREEN TOGGLE ──
+function toggleRightPanelFullscreen(btn) {
+  const panel = document.querySelector('.right-panel');
+  panel.classList.toggle('fullscreen');
+  if (panel.classList.contains('fullscreen')) {
+    btn.innerHTML = '🗗';
+    btn.setAttribute('data-tip', 'Exit Full Screen');
+    showToast('Coding panel expanded');
+  } else {
+    btn.innerHTML = '⛶';
+    btn.setAttribute('data-tip', 'Expand to Full Screen');
+    showToast('Coding panel restored');
+  }
+  // Re-render to show/hide edit fields based on new view state
+  renderHCC();
+  renderGaps();
+  renderCPT();
+  renderCPTGaps();
+}
+
+function toggleCenterPanelFullscreen(btn) {
+  const panel = document.querySelector('.center-panel');
+  panel.classList.toggle('fullscreen');
+  if (panel.classList.contains('fullscreen')) {
+    btn.innerHTML = '🗗 Exit Full';
+    showToast('Center panel expanded');
+  } else {
+    btn.innerHTML = '⛶ Full';
+    showToast('Center panel restored');
+  }
+}
+
+function toggleClaimsFullscreen(btn) {
+  const panel = document.querySelector('.claims-section');
+  panel.classList.toggle('fullscreen');
+  if (panel.classList.contains('fullscreen')) {
+    btn.innerHTML = '🗗 Exit Full';
+    showToast('Claims expanded');
+  } else {
+    btn.innerHTML = '⛶ Full';
+    showToast('Claims restored');
+  }
+}
+
+// ── INIT ──
+renderEncounters();
+applyClaimsFilters();
+renderHCC();
+renderGaps();
+renderCPT();
+renderCPTGaps();
+</script>
+</body>
+</html>

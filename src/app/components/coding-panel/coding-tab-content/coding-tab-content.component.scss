@@ -1,0 +1,48 @@
+.coding-tab-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.coding-section { border-bottom: 1px solid #9aa8b7; }
+.section-header {
+  padding: 6px 8px;
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; background: linear-gradient(#eef3f8, #e1e8f0);
+  user-select: none;
+  border-top: 1px solid #ffffff;
+  &:hover { background: linear-gradient(#f3f6fa, #e5edf6); }
+}
+.section-icon { font-size: 10px; width: 14px; text-align: center; }
+.section-label {
+  font-size: 10px; font-weight: 700; color: #1e4f8f;
+  text-transform: uppercase;
+}
+.chevron { font-size: 10px; color: #6b7785; transition: transform 0.2s; &.open { transform: rotate(90deg); } }
+
+.section-body { padding: 6px 8px; background:#f9fbfd; }
+
+.add-form-card {
+  background: #ffffff;
+  border: 1px solid #9aa8b7;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+.add-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

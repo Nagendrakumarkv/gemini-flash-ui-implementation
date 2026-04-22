@@ -1,0 +1,50 @@
+<div class="code-entry" *ngIf="!isEditing">
+  <div class="code-tag" *ngIf="entry.icd">{{entry.icd}}</div>
+  <div class="code-tag" *ngIf="entry.cpt">{{entry.cpt}}</div>
+  
+  <div class="code-desc">{{entry.desc}}</div>
+  
+  <div class="fullscreen-only" *ngIf="isFullscreen">
+    <div class="entry-card-meta">
+      <span class="meta-pill" *ngIf="entry.hcc">HCC: {{entry.hcc}}</span>
+      <span class="meta-pill" *ngIf="entry.raf">RAF: {{entry.raf}}</span>
+      <span class="meta-pill" *ngIf="entry.dos">DOS: {{entry.dos}}</span>
+      <span class="meta-pill" *ngIf="entry.src">Src: {{entry.src}}</span>
+      <span class="meta-pill" *ngIf="entry.conf">Conf: {{entry.conf}}</span>
+    </div>
+  </div>
+
+  <div class="entry-actions">
+    <div class="del-btn" (click)="startEdit()">✎</div>
+    <div class="del-btn" (click)="delete.emit(entry.id)">×</div>
+  </div>
+</div>
+
+<div class="edit-form" *ngIf="isEditing">
+  <div class="form-grid">
+    <div *ngFor="let field of config" [style.grid-column]="'span ' + (field.cols || 4)">
+      <label class="form-label">{{field.label}}</label>
+      
+      <input *ngIf="field.type === 'text' || field.type === 'number'"
+             [type]="field.type"
+             class="form-control"
+             [placeholder]="field.placeholder"
+             [(ngModel)]="editedEntry[field.key]"
+             [disabled]="field.disabled">
+
+      <select *ngIf="field.type === 'select'"
+              class="form-select"
+              [(ngModel)]="editedEntry[field.key]">
+        <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
+      </select>
+
+      <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
+                     [(ngModel)]="editedEntry[field.key]">
+      </app-opp-lookup>
+    </div>
+  </div>
+  <div class="edit-actions">
+    <button class="btn blue" (click)="save()">Save</button>
+    <button class="btn" (click)="onCancel()">Cancel</button>
+  </div>
+</div>

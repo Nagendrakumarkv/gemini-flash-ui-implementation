@@ -1,0 +1,45 @@
+.pdf-container {
+  display: flex; flex-direction: column; height: 100%; overflow: hidden; background: #dcdcdc;
+}
+.pdf-toolbar {
+  height: 30px;
+  background: #eef2f6;
+  border-bottom: 1px solid #9aa8b7;
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 8px; flex-shrink: 0;
+}
+.pdf-name { font-size: 10px; color: #4f647d; font-weight: 600; }
+.page-nav { display: flex; align-items: center; gap: 4px; margin-left: auto; color: #4f647d; }
+.page-input {
+  width: 36px; text-align: center;
+  background: #ffffff; border: 1px solid #9aa8b7;
+  border-radius: 4px; color: #1f2f44; font-size: 10px;
+  padding: 2px; outline: none;
+}
+.pdf-viewer-content {
+  flex: 1; overflow: hidden; background: #d9d9d9; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.pdf-mock {
+  width: 100%; height: 100%; overflow-y: auto;
+  padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.pdf-page {
+  background: #ffffff; color: #111;
+  width: 100%; max-width: 520px;
+  border: 1px solid #9da8b4;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  padding: 24px 28px;
+  font-size: 11px; line-height: 1.6;
+  position: relative;
+}
+.pdf-indicator {
+  position: absolute; top: 8px; right: 8px;
+  background: #edf2f7; border: 1px solid #c0ccda;
+  border-radius: 4px; padding: 3px 8px; font-size: 10px; color: #4f647d;
+}
+.pdf-header { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #1a4470; border-bottom: 2px solid #1a4470; padding-bottom: 6px; }
+.pdf-section { font-size: 11px; font-weight: 700; margin: 10px 0 4px; color: #333; }
+.pdf-row { display: flex; gap: 20px; margin-bottom: 2px; }
+.pdf-label { font-weight: 700; width: 120px; }
+.pdf-highlight { background: #fff3a5; padding: 1px 2px; border-radius: 2px; }

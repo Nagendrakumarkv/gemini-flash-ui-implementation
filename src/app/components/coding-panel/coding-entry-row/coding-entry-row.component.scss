@@ -1,0 +1,84 @@
+.code-entry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #cfd8e3;
+  border-radius: 3px;
+  padding: 4px 6px;
+  transition: border-color 0.15s;
+  &:hover { border-color: #73859a; }
+}
+
+.code-tag {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 72px;
+}
+
+.code-desc {
+  font-size: 10px;
+  color: #4f647d;
+  flex: 1;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.del-btn {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #6b7785;
+  font-size: 12px;
+  transition: all 0.1s;
+  &:hover { background: #fde8e8; color: #c53030; }
+}
+
+.edit-form {
+  background: #f9fbfd;
+  border: 1px solid #9aa8b7;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 4px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fullscreen-only {
+  display: block;
+  flex: 1;
+}
+
+.entry-card-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.meta-pill {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #edf2f7;
+  color: #4f647d;
+  font-family: var(--sans);
+}

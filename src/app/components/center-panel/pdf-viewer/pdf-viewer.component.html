@@ -1,0 +1,41 @@
+<div class="pdf-container">
+  <div class="pdf-toolbar">
+    <button class="btn" (click)="navPage(-1)">◀</button>
+    <button class="btn" (click)="navPage(1)">▶</button>
+    <div class="pdf-name">{{filename}}</div>
+    <button class="btn" (click)="showToast('Annotation mode on')">✏ Annotate</button>
+    <button class="btn" (click)="showToast('Highlight mode on')">🖊 Highlight</button>
+    <div class="page-nav">
+      Pg <input class="page-input" [value]="currentPage" (change)="currentPage = +$any($event.target).value"> / {{totalPages}}
+      <button class="btn" (click)="showToast('Zoom in')">+</button>
+      <button class="btn" (click)="showToast('Zoom out')">−</button>
+    </div>
+  </div>
+
+  <div class="pdf-viewer-content">
+    <div class="pdf-mock">
+      <div class="pdf-page">
+        <div class="pdf-indicator">ENC-041 · Pg {{currentPage}}/{{totalPages}}</div>
+        <div class="pdf-header">CLINIC VISIT RECORD</div>
+        <div class="pdf-row"><span class="pdf-label">Patient:</span> Johnson, Michael A.</div>
+        <div class="pdf-row"><span class="pdf-label">DOB:</span> 03/15/1958 &nbsp; <span class="pdf-label">DOS:</span> 09/14/2024</div>
+        <div class="pdf-row"><span class="pdf-label">Provider:</span> Dr. Sarah Chen, MD</div>
+        <div class="pdf-row"><span class="pdf-label">Facility:</span> Northview Medical Associates</div>
+        <div class="pdf-section">CHIEF COMPLAINT</div>
+        <p>Patient presents for routine follow-up of <span class="pdf-highlight">Type 2 Diabetes Mellitus with CKD</span> and <span class="pdf-highlight">Congestive Heart Failure, systolic, chronic</span>. Reports shortness of breath on exertion.</p>
+        <div class="pdf-section">DIAGNOSES</div>
+        <p><strong>1.</strong> <span class="pdf-highlight">E11.65 — T2DM with Hyperglycemia</span><br>
+        <strong>2.</strong> <span class="pdf-highlight">I50.22 — Chronic Systolic HF, compensated</span><br>
+        <strong>3.</strong> N18.3 — CKD Stage 3a<br>
+        <strong>4.</strong> I10 — Essential Hypertension<br>
+        <strong>5.</strong> Z87.891 — Personal history of nicotine dependence</p>
+        <div class="pdf-section">PROCEDURES</div>
+        <p>99215 — Office visit, high complexity (45 min)<br>
+        99417 — Prolonged office service (15 min)<br>
+        93000 — Electrocardiogram, routine</p>
+        <div class="pdf-section">PLAN</div>
+        <p>Increase Metformin to 1000mg BID. Cardiology referral placed. Repeat BMP in 4 weeks. Patient counselled on low-sodium diet and fluid restriction. Follow-up in 6 weeks.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+.workspace {
+  display: grid;
+  grid-template-columns: 220px 4px 1fr 4px 380px;
+  grid-template-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.center-panel {
+  display: flex; flex-direction: column;
+  overflow: hidden; background: #dcdcdc;
+}
+.col-enc { min-width: 0; }
+.col-coding { min-width: 0; }
+.row-pdf { flex: 1; min-height: 0; }
+.row-claims { height: 220px; flex-shrink: 0; }
+
+.resize-v {
+  width: 4px; background: #b7b7b7; cursor: col-resize; flex-shrink: 0;
+  transition: background 0.15s;
+  z-index: 100;
+  &:hover { background: #1e4f8f; }
+}
+.resize-h {
+  height: 4px; background: #b7b7b7; cursor: row-resize; flex-shrink: 0;
+  transition: background 0.15s;
+  &:hover { background: #1e4f8f; }
+}

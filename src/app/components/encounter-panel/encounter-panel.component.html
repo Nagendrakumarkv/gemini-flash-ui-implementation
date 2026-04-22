@@ -1,0 +1,23 @@
+<div class="encounter-panel">
+  <div class="panel-head">
+    📋 Encounters
+    <span class="count"><span class="badge blue">54</span></span>
+  </div>
+  <div class="enc-search">
+    <input class="search-input" placeholder="🔍 Search DOS, provider, ICD...">
+  </div>
+  <div class="enc-list">
+    <div *ngFor="let enc of encounters$ | async" 
+         class="enc-item" 
+         [class.active]="selectedEncounter?.id === enc.id"
+         (click)="selectEncounter(enc)">
+      <div class="enc-num">{{enc.id}}</div>
+      <div class="enc-dos">{{enc.dos}}</div>
+      <div class="enc-provider">{{enc.provider}}</div>
+      <div class="enc-tags" *ngIf="enc.tags">
+        <span *ngFor="let tag of enc.tags" class="enc-tag">{{tag}}</span>
+      </div>
+      <div class="enc-status" [class]="enc.status"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="claims-section">
+  <div class="claims-toolbar">
+    <span class="section-title">💰 Claims Data</span>
+    <span class="sep"></span>
+    <input class="mini-input" placeholder="🔍 Search claims...">
+    <span class="filter-chip on">All</span>
+    <span class="filter-chip">Paid</span>
+    <span class="filter-chip">Denied</span>
+    <span class="filter-chip">Pending</span>
+    <button class="btn" (click)="toggleColSelector()">⚙ Cols</button>
+  </div>
+
+  <div class="col-selector" *ngIf="isColSelectorOpen">
+    <label><input type="checkbox" checked> Claim ID</label>
+    <label><input type="checkbox" checked> DOS</label>
+    <label><input type="checkbox" checked> Provider</label>
+    <label><input type="checkbox" checked> ICD</label>
+    <label><input type="checkbox" checked> Amount</label>
+    <label><input type="checkbox" checked> Status</label>
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Claim ID</th>
+          <th>DOS</th>
+          <th>Provider</th>
+          <th>ICD</th>
+          <th>Description</th>
+          <th class="cell-amt">Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let claim of claims">
+          <td>{{claim.id}}</td>
+          <td>{{claim.dos}}</td>
+          <td>{{claim.provider}}</td>
+          <td class="cell-icd">{{claim.icd}}</td>
+          <td>{{claim.desc}}</td>
+          <td class="cell-amt">${{claim.amt | number:'1.2-2'}}</td>
+          <td>
+            <span class="status-pill" [ngClass]="claim.status.toLowerCase()">{{claim.status}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

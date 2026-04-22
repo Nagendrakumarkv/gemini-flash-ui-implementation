@@ -1,0 +1,75 @@
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { TabFieldConfig } from '../../../models/tab-config.model';
+import { CodingDataService } from '../../../services/coding-data.service';
+import { TabConfigService } from '../../../services/tab-config.service';
+import { Observable } from 'rxjs';
+
+@Component({
+  selector: 'app-coding-tab-content',
+  templateUrl: './coding-tab-content.component.html',
+  styleUrls: ['./coding-tab-content.component.scss'],
+  standalone: false
+})
+export class CodingTabContentComponent implements OnInit, OnChanges {
+  @Input() tabId: string = 'icd';
+  @Input() isFullscreen: boolean = false;
+
+  config: TabFieldConfig[] = [];
+  entries$: Observable<any[]> | null = null;
+  
+  newEntry: any = {};
+  isExpanded = true;
+  headerLabel: string = '';
+
+  constructor(
+    private tabConfigService: TabConfigService,
+    private codingDataService: CodingDataService
+  ) {}
+
+  ngOnInit() {
+    this.loadTab();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['tabId']) {
+      this.loadTab();
+    }
+  }
+
+  loadTab() {
+    this.config = this.tabConfigService.getTabConfig(this.tabId);
+    this.newEntry = {};
+    
+    switch (this.tabId) {
+      case 'icd': 
+        this.entries$ = this.codingDataService.hccData$; 
+        this.headerLabel = 'ICD CODES';
+        break;
+      case 'icd-gaps': 
+        this.entries$ = this.codingDataService.gapData$; 
+        this.headerLabel = 'ICD GAPS';
+        break;
+      case 'cpt': 
+        this.entries$ = this.codingDataService.cptData$; 
+        this.headerLabel = 'CPT CODES';
+        break;
+      case 'cpt-gaps': 
+        this.entries$ = this.codingDataService.cptGapData$; 
+        this.headerLabel = 'CPT GAPS';
+        break;
+    }
+  }
+
+  add() {
+    this.codingDataService.addEntry(this.tabId, this.newEntry);
+    this.newEntry = {};
+  }
+
+  update(entry: any) {
+    this.codingDataService.updateEntry(this.tabId, entry);
+  }
+
+  delete(id: string) {
+    this.codingDataService.deleteEntry(this.tabId, id);
+  }
+}

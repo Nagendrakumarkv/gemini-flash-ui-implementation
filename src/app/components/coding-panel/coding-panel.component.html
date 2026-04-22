@@ -1,0 +1,54 @@
+<div class="right-panel" [class.fullscreen]="isFullscreen">
+  <div class="tab-bar">
+    <div *ngFor="let tab of tabs" 
+         class="tab-btn" 
+         [class.active]="activeTab === tab.id"
+         (click)="selectTab(tab.id)">
+      {{tab.label}}
+      <span class="tab-count" *ngIf="tab.count > 0">{{tab.count}}</span>
+    </div>
+    <div style="margin-left: auto; display: flex; align-items: center; padding-right: 8px;">
+       <button class="btn" (click)="toggleFullscreen()">{{isFullscreen ? '⤦ Normal' : '⛶ Full'}}</button>
+    </div>
+  </div>
+
+  <div class="dos-tabs">
+    <div class="dos-tab" [class.active]="selectedDos === '09/14/24'" (click)="selectedDos = '09/14/24'">09/14/24</div>
+    <div class="dos-tab" [class.active]="selectedDos === '07/22/24'" (click)="selectedDos = '07/22/24'">07/22/24</div>
+    <div class="dos-tab" [class.active]="selectedDos === '05/10/24'" (click)="selectedDos = '05/10/24'">05/10/24</div>
+    <div class="dos-tab" [class.active]="selectedDos === '03/01/24'" (click)="selectedDos = '03/01/24'">03/01/24</div>
+    <div class="dos-tab add-dos">+ DOS</div>
+  </div>
+
+  <div class="coding-content">
+    <app-coding-tab-content 
+      [tabId]="activeTab"
+      [isFullscreen]="isFullscreen">
+    </app-coding-tab-content>
+  </div>
+
+  <div class="panel-footer">
+    <button class="footer-btn submit">Submit</button>
+    <button class="footer-btn">On Hold</button>
+    <button class="footer-btn">Discard</button>
+    <button class="footer-btn">Suspend</button>
+    <button class="footer-btn">No</button>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-item">
+      <span class="summary-val">1.842</span>
+      <span class="summary-lbl">RAF</span>
+    </div>
+    <div class="summary-div"></div>
+    <div class="summary-item">
+      <span class="summary-val">12</span>
+      <span class="summary-lbl">HCCs</span>
+    </div>
+    <div class="summary-div"></div>
+    <div class="summary-item">
+      <span class="summary-val">7</span>
+      <span class="summary-lbl">Gaps</span>
+    </div>
+  </div>
+</div>
