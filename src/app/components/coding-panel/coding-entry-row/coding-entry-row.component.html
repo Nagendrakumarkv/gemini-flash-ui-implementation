@@ -15,8 +15,8 @@
   </div>
 
   <div class="entry-actions">
-    <div class="del-btn" (click)="startEdit()">✎</div>
-    <div class="del-btn" (click)="delete.emit(entry.id)">×</div>
+    <button class="row-action-btn edit" (click)="startEdit()" title="Edit entry">✎</button>
+    <button class="row-action-btn delete" (click)="delete.emit(entry.id)" title="Delete entry">×</button>
   </div>
 </div>
 
