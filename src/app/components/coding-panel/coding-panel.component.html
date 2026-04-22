@@ -1,13 +1,15 @@
 <div class="right-panel" [class.fullscreen]="isFullscreen">
   <div class="tab-bar">
-    <div *ngFor="let tab of tabs" 
-         class="tab-btn" 
-         [class.active]="activeTab === tab.id"
-         (click)="selectTab(tab.id)">
-      {{tab.label}}
-      <span class="tab-count" *ngIf="tab.count > 0">{{tab.count}}</span>
+    <div class="tabs-scroll">
+      <div *ngFor="let tab of tabs" 
+           class="tab-btn" 
+           [class.active]="activeTab === tab.id"
+           (click)="selectTab(tab.id)">
+        {{tab.label}}
+        <span class="tab-count" *ngIf="tab.count > 0">{{tab.count}}</span>
+      </div>
     </div>
-    <div style="margin-left: auto; display: flex; align-items: center; padding-right: 8px;">
+    <div class="tab-actions">
        <button class="btn" (click)="toggleFullscreen()">{{isFullscreen ? '⤦ Normal' : '⛶ Full'}}</button>
     </div>
   </div>
