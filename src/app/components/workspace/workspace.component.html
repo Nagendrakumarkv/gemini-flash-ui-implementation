@@ -1,11 +1,11 @@
-<div class="workspace">
+<div class="workspace" [style.grid-template-columns]="leftWidth + 'px 4px 1fr 4px ' + rightWidth + 'px'">
   <app-encounter-panel class="col-enc"></app-encounter-panel>
-  <div class="resize-v"></div>
+  <div class="resize-v" (mousedown)="startResizingLeft($event)"></div>
   <div class="center-panel">
     <app-pdf-viewer class="row-pdf"></app-pdf-viewer>
-    <div class="resize-h"></div>
-    <app-claims-table class="row-claims"></app-claims-table>
+    <div class="resize-h" (mousedown)="startResizingBottom($event)"></div>
+    <app-claims-table class="row-claims" [style.height.px]="bottomHeight"></app-claims-table>
   </div>
-  <div class="resize-v"></div>
+  <div class="resize-v" (mousedown)="startResizingRight($event)"></div>
   <app-coding-panel class="col-coding"></app-coding-panel>
 </div>
