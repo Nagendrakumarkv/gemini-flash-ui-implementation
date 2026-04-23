@@ -22,6 +22,9 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
   headerLabel: string = '';
   errors: { [key: string]: boolean } = {};
 
+  private tabEntries: { [key: string]: any } = {};
+  private tabErrors: { [key: string]: any } = {};
+
   constructor(
     private tabConfigService: TabConfigService,
     private codingDataService: CodingDataService
@@ -39,8 +42,16 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
 
   loadTab() {
     this.config = this.tabConfigService.getTabConfig(this.tabId);
-    this.newEntry = {};
-    this.errors = {};
+    
+    if (!this.tabEntries[this.tabId]) {
+      this.tabEntries[this.tabId] = {};
+    }
+    this.newEntry = this.tabEntries[this.tabId];
+
+    if (!this.tabErrors[this.tabId]) {
+      this.tabErrors[this.tabId] = {};
+    }
+    this.errors = this.tabErrors[this.tabId];
     
     switch (this.tabId) {
       case 'icd': 
@@ -79,9 +90,12 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
 
     if (hasError) return;
 
-    this.codingDataService.addEntry(this.tabId, this.newEntry);
-    this.newEntry = {};
-    this.errors = {};
+    this.codingDataService.addEntry(this.tabId, { ...this.newEntry });
+    
+    this.tabEntries[this.tabId] = {};
+    this.newEntry = this.tabEntries[this.tabId];
+    this.tabErrors[this.tabId] = {};
+    this.errors = this.tabErrors[this.tabId];
   }
 
   update(entry: any) {
