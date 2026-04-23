@@ -11,6 +11,25 @@ export class CodingPanelComponent implements OnInit {
   activeTab: string = 'icd';
   selectedDos: string = '09/14/24';
   isFullscreen: boolean = false;
+  dosList: string[] = ['09/14/24', '07/22/24', '05/10/24', '03/01/24'];
+
+  addDos() {
+    // Get the earliest date from the list to add an even earlier one
+    const dates = this.dosList.map(d => new Date(d));
+    const earliestDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    
+    const newDate = new Date(earliestDate);
+    newDate.setMonth(newDate.getMonth() - 1); // Go back one month
+    
+    const formatted = newDate.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: '2-digit'
+    });
+    
+    this.dosList.push(formatted);
+    this.selectedDos = formatted;
+  }
 
   tabs = [
     { id: 'icd', label: 'ICD', count: 0 },

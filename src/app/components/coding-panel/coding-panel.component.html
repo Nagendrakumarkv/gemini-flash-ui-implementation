@@ -15,11 +15,13 @@
   </div>
 
   <div class="dos-tabs">
-    <div class="dos-tab" [class.active]="selectedDos === '09/14/24'" (click)="selectedDos = '09/14/24'">09/14/24</div>
-    <div class="dos-tab" [class.active]="selectedDos === '07/22/24'" (click)="selectedDos = '07/22/24'">07/22/24</div>
-    <div class="dos-tab" [class.active]="selectedDos === '05/10/24'" (click)="selectedDos = '05/10/24'">05/10/24</div>
-    <div class="dos-tab" [class.active]="selectedDos === '03/01/24'" (click)="selectedDos = '03/01/24'">03/01/24</div>
-    <div class="dos-tab add-dos">+ DOS</div>
+    <div *ngFor="let dos of dosList" 
+         class="dos-tab" 
+         [class.active]="selectedDos === dos" 
+         (click)="selectedDos = dos">
+      {{dos}}
+    </div>
+    <div class="dos-tab add-dos" (click)="addDos()">+ DOS</div>
   </div>
 
   <div class="coding-content">
