@@ -16,6 +16,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class OppLookupComponent implements ControlValueAccessor {
   @Input() placeholder = 'Select Opportunity Type...';
+  @Input() isInvalid = false;
   
   value: string = '';
   isOpen = false;

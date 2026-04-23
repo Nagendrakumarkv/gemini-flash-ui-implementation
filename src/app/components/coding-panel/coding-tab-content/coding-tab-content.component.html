@@ -17,18 +17,21 @@
             <input *ngIf="field.type === 'text' || field.type === 'number'"
                    [type]="field.type"
                    class="form-control"
+                   [class.is-invalid]="errors[field.key]"
                    [placeholder]="field.placeholder"
                    [(ngModel)]="newEntry[field.key]"
                    [disabled]="field.disabled">
 
             <select *ngIf="field.type === 'select'"
                     class="form-select"
+                    [class.is-invalid]="errors[field.key]"
                     [(ngModel)]="newEntry[field.key]">
               <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
             </select>
 
             <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
-                           [(ngModel)]="newEntry[field.key]">
+                           [(ngModel)]="newEntry[field.key]"
+                           [isInvalid]="errors[field.key]">
             </app-opp-lookup>
           </div>
         </div>

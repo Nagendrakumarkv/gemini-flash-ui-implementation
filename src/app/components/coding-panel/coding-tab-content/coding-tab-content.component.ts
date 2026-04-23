@@ -20,6 +20,7 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
   newEntry: any = {};
   isExpanded = true;
   headerLabel: string = '';
+  errors: { [key: string]: boolean } = {};
 
   constructor(
     private tabConfigService: TabConfigService,
@@ -61,8 +62,25 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
   }
 
   add() {
+    this.errors = {};
+    let hasError = false;
+
+    this.config.forEach(field => {
+      // Validate fields that are not editOnly and not disabled
+      if (!field.editOnly && !field.disabled) {
+        const val = this.newEntry[field.key];
+        if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
+          this.errors[field.key] = true;
+          hasError = true;
+        }
+      }
+    });
+
+    if (hasError) return;
+
     this.codingDataService.addEntry(this.tabId, this.newEntry);
     this.newEntry = {};
+    this.errors = {};
   }
 
   update(entry: any) {
