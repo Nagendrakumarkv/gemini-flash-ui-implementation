@@ -1,17 +1,15 @@
-<div class="code-entry" *ngIf="!isEditing">
-  <div class="code-tag" *ngIf="entry.icd" [title]="'ICD Code: \'' + entry.icd + '\''">{{entry.icd}}</div>
-  <div class="code-tag" *ngIf="entry.cpt" [title]="'CPT Code: \'' + entry.cpt + '\''">{{entry.cpt}}</div>
+<div class="code-entry" [class.is-fullscreen]="isFullscreen" *ngIf="!isEditing">
+  <div class="code-tag" *ngIf="entry.icd" [title]="'system: &quot;' + entry.icd + '&quot;&#10;senior code: &quot;' + entry.icd + '&quot;'">{{entry.icd}}</div>
+  <div class="code-tag" *ngIf="entry.cpt" [title]="'system: &quot;' + entry.cpt + '&quot;&#10;senior code: &quot;' + entry.cpt + '&quot;'">{{entry.cpt}}</div>
   
-  <div class="code-desc" [title]="'Description: \'' + entry.desc + '\''">{{entry.desc}}</div>
+  <div class="code-desc" [title]="'Description: &quot;' + entry.desc + '&quot;'">{{entry.desc}}</div>
   
-  <div class="fullscreen-only" *ngIf="isFullscreen">
-    <div class="entry-card-meta">
-      <span class="meta-pill" *ngIf="entry.hcc">HCC: {{entry.hcc}}</span>
-      <span class="meta-pill" *ngIf="entry.raf">RAF: {{entry.raf}}</span>
-      <span class="meta-pill" *ngIf="entry.dos">DOS: {{entry.dos}}</span>
-      <span class="meta-pill" *ngIf="entry.src">Src: {{entry.src}}</span>
-      <span class="meta-pill" *ngIf="entry.conf">Conf: {{entry.conf}}</span>
-    </div>
+  <div class="entry-meta-grid" *ngIf="isFullscreen">
+    <span class="meta-val hcc" *ngIf="entry.hcc" [title]="'HCC: &quot;' + entry.hcc + '&quot;'">{{entry.hcc}}</span>
+    <span class="meta-val raf" *ngIf="entry.raf" [title]="'RAF: &quot;' + entry.raf + '&quot;'">{{entry.raf}}</span>
+    <span class="meta-val dos" *ngIf="entry.dos" [title]="'DOS: &quot;' + entry.dos + '&quot;'">{{entry.dos}}</span>
+    <span class="meta-val src" *ngIf="entry.src" [title]="'Source: &quot;' + entry.src + '&quot;'">{{entry.src}}</span>
+    <span class="meta-val conf" *ngIf="entry.conf" [title]="'Confidence: &quot;' + entry.conf + '&quot;'">{{entry.conf}}</span>
   </div>
 
   <div class="entry-actions">
@@ -31,21 +29,21 @@
              [placeholder]="field.placeholder"
              [(ngModel)]="editedEntry[field.key]"
              [disabled]="field.disabled"
-             [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
+             [title]="field.label + ': &quot;' + (editedEntry[field.key] || '') + '&quot;'">
 
       <select *ngIf="field.type === 'select'"
               class="form-select"
               [(ngModel)]="editedEntry[field.key]"
-              [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
+              [title]="field.label + ': &quot;' + (editedEntry[field.key] || '') + '&quot;'">
         <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
       </select>
 
       <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
                      [(ngModel)]="editedEntry[field.key]"
-                     [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
+                     [title]="field.label + ': &quot;' + (editedEntry[field.key] || '') + '&quot;'">
       </app-opp-lookup>
 
-      <app-medical-code-lookup *ngIf="field.type === 'code-lookup'" [(ngModel)]="editedEntry[field.key]" [tabId]="tabId" (codeSelected)="onCodeSelected($event)" [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''"></app-medical-code-lookup>
+      <app-medical-code-lookup *ngIf="field.type === 'code-lookup'" [(ngModel)]="editedEntry[field.key]" [tabId]="tabId" (codeSelected)="onCodeSelected($event)" [title]="field.label + ': &quot;' + (editedEntry[field.key] || '') + '&quot;'"></app-medical-code-lookup>
     </div>
   </div>
   <div class="edit-actions">
