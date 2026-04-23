@@ -20,26 +20,24 @@
                    [class.is-invalid]="errors[field.key]"
                    [placeholder]="field.placeholder"
                    [(ngModel)]="newEntry[field.key]"
-                   [disabled]="field.disabled">
+                   [disabled]="field.disabled"
+                   [title]="field.label + ': \'' + (newEntry[field.key] || '') + '\''">
 
             <select *ngIf="field.type === 'select'"
                     class="form-select"
                     [class.is-invalid]="errors[field.key]"
-                    [(ngModel)]="newEntry[field.key]">
+                    [(ngModel)]="newEntry[field.key]"
+                    [title]="field.label + ': \'' + (newEntry[field.key] || '') + '\''">
               <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
             </select>
 
             <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
                            [(ngModel)]="newEntry[field.key]"
-                           [isInvalid]="errors[field.key]">
+                           [isInvalid]="errors[field.key]"
+                           [title]="field.label + ': \'' + (newEntry[field.key] || '') + '\''">
             </app-opp-lookup>
 
-            <app-medical-code-lookup *ngIf="field.type === 'code-lookup'"
-                                    [(ngModel)]="newEntry[field.key]"
-                                    [tabId]="tabId"
-                                    [isInvalid]="errors[field.key]"
-                                    (codeSelected)="onCodeSelected($event)">
-            </app-medical-code-lookup>
+            <app-medical-code-lookup *ngIf="field.type === 'code-lookup'" [(ngModel)]="newEntry[field.key]" [tabId]="tabId" [isInvalid]="errors[field.key]" (codeSelected)="onCodeSelected($event)" [title]="field.label + ': \'' + (newEntry[field.key] || '') + '\''"></app-medical-code-lookup>
           </div>
         </div>
         <div class="add-actions">

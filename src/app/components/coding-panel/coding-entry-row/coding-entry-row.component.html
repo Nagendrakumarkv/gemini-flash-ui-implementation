@@ -1,8 +1,8 @@
 <div class="code-entry" *ngIf="!isEditing">
-  <div class="code-tag" *ngIf="entry.icd">{{entry.icd}}</div>
-  <div class="code-tag" *ngIf="entry.cpt">{{entry.cpt}}</div>
+  <div class="code-tag" *ngIf="entry.icd" [title]="'ICD Code: \'' + entry.icd + '\''">{{entry.icd}}</div>
+  <div class="code-tag" *ngIf="entry.cpt" [title]="'CPT Code: \'' + entry.cpt + '\''">{{entry.cpt}}</div>
   
-  <div class="code-desc">{{entry.desc}}</div>
+  <div class="code-desc" [title]="'Description: \'' + entry.desc + '\''">{{entry.desc}}</div>
   
   <div class="fullscreen-only" *ngIf="isFullscreen">
     <div class="entry-card-meta">
@@ -30,23 +30,22 @@
              class="form-control"
              [placeholder]="field.placeholder"
              [(ngModel)]="editedEntry[field.key]"
-             [disabled]="field.disabled">
+             [disabled]="field.disabled"
+             [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
 
       <select *ngIf="field.type === 'select'"
               class="form-select"
-              [(ngModel)]="editedEntry[field.key]">
+              [(ngModel)]="editedEntry[field.key]"
+              [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
         <option *ngFor="let opt of field.options" [value]="opt">{{opt}}</option>
       </select>
 
       <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
-                     [(ngModel)]="editedEntry[field.key]">
+                     [(ngModel)]="editedEntry[field.key]"
+                     [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''">
       </app-opp-lookup>
 
-      <app-medical-code-lookup *ngIf="field.type === 'code-lookup'"
-                              [(ngModel)]="editedEntry[field.key]"
-                              [tabId]="tabId"
-                              (codeSelected)="onCodeSelected($event)">
-      </app-medical-code-lookup>
+      <app-medical-code-lookup *ngIf="field.type === 'code-lookup'" [(ngModel)]="editedEntry[field.key]" [tabId]="tabId" (codeSelected)="onCodeSelected($event)" [title]="field.label + ': \'' + (editedEntry[field.key] || '') + '\''"></app-medical-code-lookup>
     </div>
   </div>
   <div class="edit-actions">
