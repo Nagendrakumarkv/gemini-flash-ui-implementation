@@ -40,6 +40,7 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
   loadTab() {
     this.config = this.tabConfigService.getTabConfig(this.tabId);
     this.newEntry = {};
+    this.errors = {};
     
     switch (this.tabId) {
       case 'icd': 
