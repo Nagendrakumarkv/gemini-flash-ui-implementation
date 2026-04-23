@@ -5,7 +5,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
   templateUrl: './app.html',
   standalone: false,
   styleUrl: './app.scss',
-  encapsulation: ViewEncapsulation.None
+  // encapsulation: ViewEncapsulation.None
 })
 export class App {
   title = 'oscar-workbench';
