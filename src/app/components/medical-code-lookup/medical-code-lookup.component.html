@@ -1,0 +1,22 @@
+<div class="code-lookup-wrapper">
+  <div class="input-container">
+    <input type="text" 
+           class="form-control code-input" 
+           [class.is-invalid]="isInvalid"
+           [placeholder]="placeholder" 
+           [value]="value"
+           (input)="onInput($event)"
+           (focus)="isOpen = true"
+           (blur)="close()">
+    <span class="lookup-icon" (click)="toggle()">🔍</span>
+  </div>
+
+  <div class="results-dropdown" *ngIf="isOpen && searchResults.length > 0">
+    <div class="result-item" 
+         *ngFor="let result of searchResults"
+         (mousedown)="selectCode(result)">
+      <div class="result-code">{{result.code}}</div>
+      <div class="result-desc">{{result.description}}</div>
+    </div>
+  </div>
+</div>

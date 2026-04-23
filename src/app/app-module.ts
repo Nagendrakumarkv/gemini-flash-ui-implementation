@@ -13,6 +13,7 @@ import { CodingTabContentComponent } from './components/coding-panel/coding-tab-
 import { CodingEntryRowComponent } from './components/coding-panel/coding-entry-row/coding-entry-row.component';
 import { OppLookupComponent } from './components/opp-lookup/opp-lookup.component';
 import { ToastComponent } from './components/toast/toast.component';
+import { MedicalCodeLookupComponent } from './components/medical-code-lookup/medical-code-lookup.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ToastComponent } from './components/toast/toast.component';
     CodingTabContentComponent,
     CodingEntryRowComponent,
     OppLookupComponent,
-    ToastComponent
+    ToastComponent,
+    MedicalCodeLookupComponent
   ],
   imports: [
     BrowserModule,

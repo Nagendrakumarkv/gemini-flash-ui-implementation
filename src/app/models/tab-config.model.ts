@@ -1,7 +1,7 @@
 export interface TabFieldConfig {
   key: string;
   label: string;
-  type: 'text' | 'select' | 'opp-lookup' | 'number';
+  type: 'text' | 'select' | 'opp-lookup' | 'number' | 'code-lookup';
   placeholder?: string;
   options?: string[];         // for type: 'select'
   cols?: number;              // grid column span

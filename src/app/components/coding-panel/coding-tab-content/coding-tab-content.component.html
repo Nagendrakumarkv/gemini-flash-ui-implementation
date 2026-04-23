@@ -33,6 +33,13 @@
                            [(ngModel)]="newEntry[field.key]"
                            [isInvalid]="errors[field.key]">
             </app-opp-lookup>
+
+            <app-medical-code-lookup *ngIf="field.type === 'code-lookup'"
+                                    [(ngModel)]="newEntry[field.key]"
+                                    [tabId]="tabId"
+                                    [isInvalid]="errors[field.key]"
+                                    (codeSelected)="onCodeSelected($event)">
+            </app-medical-code-lookup>
           </div>
         </div>
         <div class="add-actions">
@@ -46,6 +53,7 @@
           *ngFor="let entry of entries$ | async"
           [entry]="entry"
           [config]="config"
+          [tabId]="tabId"
           [isFullscreen]="isFullscreen"
           (update)="update($event)"
           (delete)="delete($event)">

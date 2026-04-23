@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/cor
 import { TabFieldConfig } from '../../../models/tab-config.model';
 import { CodingDataService } from '../../../services/coding-data.service';
 import { TabConfigService } from '../../../services/tab-config.service';
+import { MedicalCode } from '../../../services/code-lookup.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -71,6 +72,12 @@ export class CodingTabContentComponent implements OnInit, OnChanges {
         this.headerLabel = 'CPT GAPS';
         break;
     }
+  }
+
+  onCodeSelected(code: MedicalCode) {
+    this.newEntry['desc'] = code.description;
+    if (code.hcc) this.newEntry['hcc'] = code.hcc;
+    if (code.raf) this.newEntry['raf'] = code.raf;
   }
 
   add() {

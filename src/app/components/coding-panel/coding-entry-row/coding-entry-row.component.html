@@ -41,6 +41,12 @@
       <app-opp-lookup *ngIf="field.type === 'opp-lookup'"
                      [(ngModel)]="editedEntry[field.key]">
       </app-opp-lookup>
+
+      <app-medical-code-lookup *ngIf="field.type === 'code-lookup'"
+                              [(ngModel)]="editedEntry[field.key]"
+                              [tabId]="tabId"
+                              (codeSelected)="onCodeSelected($event)">
+      </app-medical-code-lookup>
     </div>
   </div>
   <div class="edit-actions">

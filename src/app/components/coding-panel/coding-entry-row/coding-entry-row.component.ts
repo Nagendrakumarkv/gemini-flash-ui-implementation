@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TabFieldConfig } from '../../../models/tab-config.model';
+import { MedicalCode } from '../../../services/code-lookup.service';
 
 @Component({
   selector: 'app-coding-entry-row',
@@ -10,6 +11,7 @@ import { TabFieldConfig } from '../../../models/tab-config.model';
 export class CodingEntryRowComponent {
   @Input() entry: any;
   @Input() config: TabFieldConfig[] = [];
+  @Input() tabId: string = 'icd';
   @Input() isFullscreen = false;
 
   @Output() edit = new EventEmitter<void>();
@@ -34,5 +36,11 @@ export class CodingEntryRowComponent {
   onCancel() {
     this.isEditing = false;
     this.cancel.emit();
+  }
+
+  onCodeSelected(code: MedicalCode) {
+    this.editedEntry['desc'] = code.description;
+    if (code.hcc) this.editedEntry['hcc'] = code.hcc;
+    if (code.raf) this.editedEntry['raf'] = code.raf;
   }
 }
