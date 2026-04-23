@@ -1,0 +1,12 @@
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+app-workspace {
+  flex: 1;
+  min-height: 0;
+}
+

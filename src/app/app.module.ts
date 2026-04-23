@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
-import { App } from './app';
+import { AppComponent } from './app.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { EncounterPanelComponent } from './components/encounter-panel/encounter-panel.component';
@@ -17,7 +17,7 @@ import { MedicalCodeLookupComponent } from './components/medical-code-lookup/med
 
 @NgModule({
   declarations: [
-    App,
+    AppComponent,
     TopbarComponent,
     WorkspaceComponent,
     EncounterPanelComponent,
@@ -35,6 +35,6 @@ import { MedicalCodeLookupComponent } from './components/medical-code-lookup/med
     FormsModule
   ],
   providers: [],
-  bootstrap: [App]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

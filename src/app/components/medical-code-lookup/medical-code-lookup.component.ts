@@ -6,7 +6,6 @@ import { CodeLookupService, MedicalCode } from '../../services/code-lookup.servi
   selector: 'app-medical-code-lookup',
   templateUrl: './medical-code-lookup.component.html',
   styleUrls: ['./medical-code-lookup.component.scss'],
-  standalone: false,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

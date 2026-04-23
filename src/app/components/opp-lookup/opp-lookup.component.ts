@@ -5,7 +5,6 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'app-opp-lookup',
   templateUrl: './opp-lookup.component.html',
   styleUrls: ['./opp-lookup.component.scss'],
-  standalone: false,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

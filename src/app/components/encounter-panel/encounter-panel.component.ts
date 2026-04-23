@@ -7,8 +7,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-encounter-panel',
   templateUrl: './encounter-panel.component.html',
-  styleUrls: ['./encounter-panel.component.scss'],
-  standalone: false
+  styleUrls: ['./encounter-panel.component.scss']
 })
 export class EncounterPanelComponent implements OnInit {
   private searchQuery$ = new BehaviorSubject<string>('');

@@ -4,8 +4,7 @@ import { Claim } from '../../../models/claim.model';
 @Component({
   selector: 'app-claims-table',
   templateUrl: './claims-table.component.html',
-  styleUrls: ['./claims-table.component.scss'],
-  standalone: false
+  styleUrls: ['./claims-table.component.scss']
 })
 export class ClaimsTableComponent {
   allClaims: any[] = [

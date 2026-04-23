@@ -4,8 +4,7 @@ import { CodingDataService } from '../../services/coding-data.service';
 @Component({
   selector: 'app-coding-panel',
   templateUrl: './coding-panel.component.html',
-  styleUrls: ['./coding-panel.component.scss'],
-  standalone: false
+  styleUrls: ['./coding-panel.component.scss']
 })
 export class CodingPanelComponent implements OnInit {
   activeTab: string = 'icd';

@@ -5,8 +5,7 @@ import { CodingDataService } from '../../services/coding-data.service';
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.scss'],
-  standalone: false
+  styleUrls: ['./topbar.component.scss']
 })
 export class TopbarComponent implements OnInit {
   icdCount = 0;

@@ -4,8 +4,7 @@ import { ToastService } from '../../../services/toast.service';
 @Component({
   selector: 'app-pdf-viewer',
   templateUrl: './pdf-viewer.component.html',
-  styleUrls: ['./pdf-viewer.component.scss'],
-  standalone: false
+  styleUrls: ['./pdf-viewer.component.scss']
 })
 export class PdfViewerComponent {
   @Input() filename: string = 'ENC-041 — PCP Visit 09/14/2024.pdf';

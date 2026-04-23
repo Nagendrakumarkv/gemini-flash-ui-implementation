@@ -5,8 +5,7 @@ import { MedicalCode } from '../../../services/code-lookup.service';
 @Component({
   selector: 'app-coding-entry-row',
   templateUrl: './coding-entry-row.component.html',
-  styleUrls: ['./coding-entry-row.component.scss'],
-  standalone: false
+  styleUrls: ['./coding-entry-row.component.scss']
 })
 export class CodingEntryRowComponent {
   @Input() entry: any;

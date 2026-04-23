@@ -8,8 +8,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-coding-tab-content',
   templateUrl: './coding-tab-content.component.html',
-  styleUrls: ['./coding-tab-content.component.scss'],
-  standalone: false
+  styleUrls: ['./coding-tab-content.component.scss']
 })
 export class CodingTabContentComponent implements OnInit, OnChanges {
   @Input() tabId: string = 'icd';

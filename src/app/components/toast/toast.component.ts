@@ -4,8 +4,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.scss'],
-  standalone: false
+  styleUrls: ['./toast.component.scss']
 })
 export class ToastComponent implements OnInit {
   message: string = '';
